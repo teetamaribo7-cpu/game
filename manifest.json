@@ -1,0 +1,14 @@
+{
+  "name": "Te Wa – Kiribati Canoe Fishing",
+  "short_name": "Te Wa",
+  "description": "Sail your canoe across the lagoon, catch fish, dodge sharks and clean the ocean. Works offline.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b4f6c",
+  "theme_color": "#0b4f6c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

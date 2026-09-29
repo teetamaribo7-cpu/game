@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b4f6c">
+<meta name="description" content="Te Wa – a Kiribati canoe fishing game. Works offline on any phone.">
+<title>Te Wa – Kiribati Canoe Fishing</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root { --sea: #0b4f6c; --sun: #ffd100; --red: #c8102e; --ink: #fff; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--sea); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden;
+    touch-action: none; user-select: none; -webkit-user-select: none; }
+  canvas { display: block; width: 100vw; height: 100vh; height: 100dvh; }
+  #hud { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between;
+    align-items: center; gap: 8px; padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+    font-weight: 700; font-size: 16px; text-shadow: 0 1px 3px #0008; pointer-events: none; }
+  #hud .grp { display: flex; gap: 12px; align-items: center; }
+  #hud button { pointer-events: auto; }
+  button { font: inherit; border: 0; border-radius: 12px; cursor: pointer; }
+  .icon-btn { background: #0006; color: #fff; padding: 6px 10px; font-size: 14px; }
+  .screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    padding: 16px; background: #062c3dcc; }
+  .screen[hidden] { display: none; }
+  .card { background: #fffdf5; color: #123; border-radius: 20px; padding: 22px; max-width: 420px;
+    width: 100%; text-align: center; box-shadow: 0 10px 40px #0007; max-height: 100%; overflow: auto; }
+  .card h1 { margin: 0 0 4px; font-size: 30px; color: var(--red); }
+  .card h2 { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: #456; }
+  .card p { margin: 8px 0; line-height: 1.4; }
+  .card ul { text-align: left; padding-left: 20px; margin: 10px 0; line-height: 1.5; }
+  .play { background: var(--red); color: #fff; font-size: 22px; font-weight: 800; padding: 14px 28px;
+    margin-top: 12px; width: 100%; }
+  .row { display: flex; gap: 8px; margin-top: 10px; }
+  .row button { flex: 1; padding: 10px; background: #e6eef2; color: #123; font-weight: 700; }
+  .row button[aria-pressed="true"] { background: var(--sea); color: #fff; }
+  .fact { background: #e8f6ff; border-left: 4px solid var(--sea); padding: 10px; border-radius: 8px;
+    text-align: left; font-size: 14px; }
+  .big { font-size: 40px; font-weight: 900; color: var(--sea); margin: 4px 0; }
+  .catch { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; text-align: left; font-size: 15px;
+    margin: 10px auto; max-width: 260px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud" hidden>
+  <div class="grp"><span id="score">0</span><span id="hooks"></span></div>
+  <div class="grp"><span id="time"></span>
+    <button class="icon-btn" id="muteBtn" aria-label="Sound">🔊</button>
+    <button class="icon-btn" id="pauseBtn" aria-label="Pause">⏸</button></div>
+</div>
+
+<div class="screen" id="menu">
+  <div class="card">
+    <h1>Te Wa</h1>
+    <h2 data-t="subtitle"></h2>
+    <p data-t="greet"></p>
+    <ul>
+      <li data-t="how1"></li>
+      <li data-t="how2"></li>
+      <li data-t="how3"></li>
+      <li data-t="how4"></li>
+    </ul>
+    <p><b data-t="best"></b> <span id="bestScore">0</span></p>
+    <button class="play" id="playBtn" data-t="play"></button>
+    <div class="row">
+      <button id="langKi" data-lang="ki">Te taetae ni Kiribati</button>
+      <button id="langEn" data-lang="en">English</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="paused" hidden>
+  <div class="card">
+    <h1 data-t="pausedTitle"></h1>
+    <button class="play" id="resumeBtn" data-t="resume"></button>
+    <div class="row"><button id="quitBtn" data-t="quit"></button></div>
+  </div>
+</div>
+
+<div class="screen" id="over" hidden>
+  <div class="card">
+    <h1 id="overTitle"></h1>
+    <div class="big" id="finalScore">0</div>
+    <p id="newBest" data-t="newBest" hidden></p>
+    <div class="catch" id="catchList"></div>
+    <div class="fact" id="factBox"></div>
+    <button class="play" id="againBtn" data-t="again"></button>
+    <div class="row"><button id="menuBtn" data-t="menu"></button></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ---------- Language (Gilbertese + English) ----------
+const TEXT = {
+  en: {
+    subtitle: 'A Kiribati canoe fishing game',
+    greet: 'Mauri! Sail your canoe (te wa) across the lagoon and catch fish before the sun sets.',
+    how1: 'Drag, or use ← → keys, to paddle your canoe.',
+    how2: 'Tap, or press Space, to drop your fishing line.',
+    how3: 'Watch out for te bakoa (sharks). They cut your line!',
+    how4: 'Hook plastic rubbish to clean the ocean for bonus points.',
+    best: 'Best catch:', play: 'Play', pausedTitle: 'Paused', resume: 'Keep fishing', quit: 'Back to menu',
+    again: 'Fish again', menu: 'Menu', newBest: '🏆 New best score!',
+    sunset: 'The sun has set. Ko rabwa!', noHooks: 'No hooks left!', cleaned: 'Clean ocean!', lineCut: 'Line cut!',
+  },
+  ki: {
+    subtitle: 'Te takaakaro n akawa n te wa',
+    greet: 'Mauri! Borau n am wa i nanon te nama ao ko na akawa ika imwain bwaka te taai.',
+    how1: 'Kaetia bwaim, ke kabongana ← →, ni kamaiua am wa.',
+    how2: 'Katoka baim i aon te tamnei, ke Space, ni kabwakara am ai.',
+    how3: 'Tarataraia te bakoa! E na motiki am ai.',
+    how4: 'Akawa bwain te bwaekaki ni kaitiakia te marawa ao ko na reke riki am maka.',
+    best: 'Am maka ae moan te rietata:', play: 'Takaakaro', pausedTitle: 'Toki teutana', resume: 'Akawa riki',
+    quit: 'Okira te moan', again: 'Akawa riki', menu: 'Te moan', newBest: '🏆 Am maka ae boou ae rietata!',
+    sunset: 'E a bwaka te taai. Ko rabwa!', noHooks: 'E a bane am ai!', cleaned: 'E itiaki te marawa!', lineCut: 'E motiki te ai!',
+  },
+};
+
+// Short facts about Kiribati shown at the end of each round.
+const FACTS = {
+  en: [
+    'Kiribati has 33 atolls and reef islands spread across 3.5 million km² of the Pacific Ocean.',
+    'Kiribati was the first country to see the new day. The Line Islands are in the earliest time zone on Earth (UTC+14).',
+    'The frigatebird (te eitei) on the Kiribati flag stands for power, freedom and I-Kiribati dance.',
+    'Most of Kiribati is less than 3 metres above sea level. Rising seas are a serious threat to its islands.',
+    'The Phoenix Islands Protected Area is one of the largest marine protected areas in the world.',
+    'Skipjack tuna (te ati) is caught in Kiribati waters and is very important for the national economy.',
+    'Plastic rubbish harms fish, turtles and seabirds. Keep our beaches and lagoons clean!',
+    'Traditional I-Kiribati navigators found their way using stars, waves and birds.',
+  ],
+  ki: [
+    'Iai 33 aban Kiribati ae a bwaerere i nanon te marawa ae Betebeke.',
+    'Kiribati te aba ae moan nooria te bong ae boou (UTC+14).',
+    'Te eitei ae n ana bwanaa Kiribati e kaota te mwaaka, te inaomata ao te mwaie.',
+    'E rang ni karaurau aban Kiribati. E kakaiaki irouia rikiraken te marawa.',
+    'Te Phoenix Islands Protected Area bon tabo ae korakora n kawakinaki n te aonnaba.',
+    'Te ati bon ika ae kakawaki irouia I-Kiribati ao ibukin mwaakan te aba.',
+    'Te bwaekaki e kamatea te ika, te on ao manu. Kaitiakia ara marawa!',
+    'Taan borau ni Kiribati a kabongana taian itoi, nao ao manu n rin kawaia.',
+  ],
+};
+
+const store = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+let lang = store('tewa-lang') || 'en';
+const t = k => (TEXT[lang] && TEXT[lang][k]) || TEXT.en[k];
+function applyLang() {
+  document.documentElement.lang = lang === 'ki' ? 'gil' : 'en';
+  document.querySelectorAll('[data-t]').forEach(el => el.textContent = t(el.dataset.t));
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => {
+  lang = b.dataset.lang; try { localStorage.setItem('tewa-lang', lang); } catch (e) {}
+  applyLang();
+});
+
+// ---------- Sound (tiny, generated; no downloads) ----------
+let audio = null, muted = store('tewa-muted') === '1';
+function beep(freq, dur = 0.1, type = 'sine', vol = 0.15, slide = 0) {
+  if (muted) return;
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain(), now = audio.currentTime;
+    o.type = type; o.frequency.setValueAtTime(freq, now);
+    if (slide) o.frequency.linearRampToValueAtTime(freq + slide, now + dur);
+    g.gain.setValueAtTime(vol, now); g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    o.connect(g).connect(audio.destination); o.start(now); o.stop(now + dur);
+  } catch (e) {}
+}
+const sfx = {
+  drop: () => beep(500, 0.12, 'sine', 0.1, -250),
+  catch: () => { beep(660, 0.1, 'triangle'); setTimeout(() => beep(880, 0.15, 'triangle'), 90); },
+  clean: () => { beep(520, 0.08, 'square', 0.08); setTimeout(() => beep(780, 0.12, 'square', 0.08), 80); },
+  cut: () => beep(200, 0.3, 'sawtooth', 0.12, -120),
+  end: () => { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => beep(f, 0.18, 'triangle'), i * 140)); },
+};
+const muteBtn = document.getElementById('muteBtn');
+const updateMute = () => muteBtn.textContent = muted ? '🔇' : '🔊';
+muteBtn.onclick = () => { muted = !muted; try { localStorage.setItem('tewa-muted', muted ? '1' : '0'); } catch (e) {} updateMute(); };
+updateMute();
+
+// ---------- Canvas setup ----------
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+let W = 0, H = 0, SEA = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2); // cap for low-end phones
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  SEA = Math.round(H * 0.32);
+}
+window.addEventListener('resize', resize); resize();
+
+// ---------- Game data ----------
+// Fish names in te taetae ni Kiribati.
+const SPECIES = [
+  { id: 'baneawa', en: 'Milkfish', pts: 5,  color: '#c9d6df', belly: '#eef3f6', size: 22, speed: 40,  depth: [0.12, 0.45], weight: 5 },
+  { id: 'ati',     en: 'Skipjack tuna', pts: 10, color: '#2d5f8b', belly: '#cfd8e3', size: 26, speed: 85,  depth: [0.35, 0.8],  weight: 3, stripes: true },
+  { id: 'onauti',  en: 'Flying fish', pts: 15, color: '#4aa3df', belly: '#dff1ff', size: 18, speed: 120, depth: [0.05, 0.25], weight: 2, wings: true },
+  { id: 'bakoa',   en: 'Shark', pts: 0, color: '#6b7b88', belly: '#c3ccd3', size: 46, speed: 60,  depth: [0.3, 0.9],   weight: 0, shark: true },
+  { id: 'plastic', en: 'Plastic', pts: 3, size: 14, speed: 20, depth: [0.02, 0.9], weight: 0, trash: true },
+];
+const byId = Object.fromEntries(SPECIES.map(s => [s.id, s]));
+const ROUND_TIME = 90, MAX_HOOKS = 3;
+
+let state = 'menu', G = null, last = 0;
+let best = +(store('tewa-best') || 0);
+
+function newGame() {
+  G = {
+    t: 0, score: 0, hooks: MAX_HOOKS, caught: {},
+    boat: { x: W / 2, vx: 0, target: null },
+    line: { state: 'idle', y: 0, fish: null },
+    fish: [], popups: [], bubbles: [],
+    spawnT: 0, sharkT: 6, trashT: 4, bird: { x: -100, y: 60, t: 8 },
+    keys: {},
+  };
+}
+
+function rand(a, b) { return a + Math.random() * (b - a); }
+function pickSpecies() {
+  const pool = SPECIES.filter(s => s.weight > 0);
+  let r = Math.random() * pool.reduce((a, s) => a + s.weight, 0);
+  for (const s of pool) { if ((r -= s.weight) < 0) return s; }
+  return pool[0];
+}
+function spawn(sp) {
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  const deep = H - SEA;
+  const ramp = 1 + G.t / ROUND_TIME * 0.6; // gets a bit faster through the day
+  G.fish.push({
+    sp, dir, x: dir > 0 ? -60 : W + 60,
+    y: SEA + deep * rand(sp.depth[0], sp.depth[1]),
+    speed: sp.speed * rand(0.8, 1.2) * ramp, phase: Math.random() * 6, hooked: false,
+  });
+}
+
+function popup(x, y, text, color = '#fff') { G.popups.push({ x, y, text, color, life: 1.3 }); }
+
+// ---------- Input ----------
+function dropLine() {
+  if (state !== 'play' || G.line.state !== 'idle') return;
+  G.line.state = 'down'; G.line.y = 0; sfx.drop();
+}
+let pointer = null;
+cv.addEventListener('pointerdown', e => {
+  if (state !== 'play') return;
+  pointer = { id: e.pointerId, x0: e.clientX, moved: false };
+  G.boat.target = e.clientX;
+});
+cv.addEventListener('pointermove', e => {
+  if (!pointer || e.pointerId !== pointer.id || state !== 'play') return;
+  if (Math.abs(e.clientX - pointer.x0) > 12) pointer.moved = true;
+  G.boat.target = e.clientX;
+});
+const endPointer = e => {
+  if (!pointer || e.pointerId !== pointer.id) return;
+  if (!pointer.moved && state === 'play') { G.boat.target = null; dropLine(); }
+  pointer = null;
+};
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', () => pointer = null);
+
+window.addEventListener('keydown', e => {
+  if (state === 'play') {
+    if (e.code === 'Space' || e.code === 'ArrowDown') { e.preventDefault(); dropLine(); }
+    if (e.code === 'KeyP' || e.code === 'Escape') pause();
+    G.keys[e.code] = true;
+  } else if (state === 'paused' && (e.code === 'KeyP' || e.code === 'Escape')) resume();
+  else if ((state === 'menu' || state === 'over') && e.code === 'Enter') start();
+});
+window.addEventListener('keyup', e => { if (G) G.keys[e.code] = false; });
+
+// ---------- Update ----------
+function update(dt) {
+  G.t += dt;
+  const b = G.boat, L = G.line;
+
+  // Boat movement: keys or drag target.
+  let ax = 0;
+  if (G.keys.ArrowLeft || G.keys.KeyA) ax -= 1;
+  if (G.keys.ArrowRight || G.keys.KeyD) ax += 1;
+  const maxV = Math.max(220, W * 0.5), slow = L.state !== 'idle' ? 0.35 : 1;
+  if (ax) b.vx = ax * maxV * slow;
+  else if (b.target != null) b.vx = Math.max(-maxV, Math.min(maxV, (b.target - b.x) * 6)) * slow;
+  else b.vx *= Math.pow(0.02, dt);
+  b.x = Math.max(40, Math.min(W - 40, b.x + b.vx * dt));
+
+  // Fishing line.
+  const hookX = b.x + 26, maxDepth = H - SEA - 20;
+  if (L.state === 'down') {
+    L.y += 260 * dt;
+    if (L.y >= maxDepth) { L.y = maxDepth; L.state = 'up'; }
+  } else if (L.state === 'up') {
+    L.y -= (L.fish ? 200 : 380) * dt;
+    if (L.fish) { L.fish.x = hookX; L.fish.y = SEA + L.y + 10; }
+    if (L.y <= 0) landCatch();
+  }
+
+  // Spawning.
+  G.spawnT -= dt;
+  if (G.spawnT <= 0 && G.fish.length < 14) { spawn(pickSpecies()); G.spawnT = rand(0.5, 1.2); }
+  G.sharkT -= dt;
+  if (G.sharkT <= 0) { spawn(byId.bakoa); G.sharkT = rand(7, 12) - G.t / ROUND_TIME * 3; }
+  G.trashT -= dt;
+  if (G.trashT <= 0) { spawn(byId.plastic); G.trashT = rand(6, 11); }
+
+  // Fish.
+  const hy = SEA + L.y;
+  for (const f of G.fish) {
+    if (f.hooked) continue;
+    f.x += f.dir * f.speed * dt;
+    f.phase += dt * (f.sp.trash ? 1.5 : 4);
+    f.y += Math.sin(f.phase) * (f.sp.trash ? 6 : 12) * dt;
+    if (L.state === 'idle' || L.fish) continue;
+    const r = f.sp.size * (f.sp.shark ? 0.9 : 0.8);
+    if (Math.abs(f.x - hookX) < r && Math.abs(f.y - hy) < r * 0.6) {
+      if (f.sp.shark) {
+        G.hooks--; L.state = 'up'; L.y = Math.min(L.y, 40); sfx.cut();
+        popup(hookX, hy, t('lineCut'), '#ff8a8a');
+        if (G.hooks <= 0) return endGame('noHooks');
+      } else {
+        f.hooked = true; L.fish = f; L.state = 'up'; sfx.drop();
+      }
+    }
+  }
+  G.fish = G.fish.filter(f => f.hooked || (f.x > -120 && f.x < W + 120));
+
+  // Frigatebird (te eitei) across the sky.
+  const bird = G.bird; bird.t -= dt;
+  if (bird.t <= 0) { bird.x += 90 * dt; bird.y = SEA * 0.3 + Math.sin(G.t * 1.5) * 10;
+    if (bird.x > W + 80) { bird.x = -80; bird.t = rand(10, 20); } }
+
+  for (const p of G.popups) { p.life -= dt; p.y -= 30 * dt; }
+  G.popups = G.popups.filter(p => p.life > 0);
+
+  if (G.t >= ROUND_TIME) endGame('sunset');
+}
+
+function landCatch() {
+  const L = G.line, f = L.fish;
+  L.state = 'idle'; L.y = 0; L.fish = null;
+  if (!f) return;
+  G.fish = G.fish.filter(x => x !== f);
+  G.score += f.sp.pts;
+  G.caught[f.sp.id] = (G.caught[f.sp.id] || 0) + 1;
+  if (f.sp.trash) { sfx.clean(); popup(G.boat.x, SEA - 40, `+${f.sp.pts} ${t('cleaned')}`, '#9ff5a0'); }
+  else { sfx.catch(); popup(G.boat.x, SEA - 40, `+${f.sp.pts} te ${f.sp.id}!`, '#ffe066'); }
+}
+
+// ---------- Drawing ----------
+function lerpColor(a, b, k) {
+  const pa = a.match(/\w\w/g).map(h => parseInt(h, 16)), pb = b.match(/\w\w/g).map(h => parseInt(h, 16));
+  return '#' + pa.map((v, i) => Math.round(v + (pb[i] - v) * k).toString(16).padStart(2, '0')).join('');
+}
+
+function drawScene(time, dayK) {
+  // Sky shifts from morning blue to sunset orange.
+  const sky = ctx.createLinearGradient(0, 0, 0, SEA);
+  sky.addColorStop(0, lerpColor('4fb3e8', '3b2a6b', dayK));
+  sky.addColorStop(1, lerpColor('bfe9ff', 'ff9e57', dayK));
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, SEA);
+
+  // Sun travels across the sky: it is also the timer.
+  const sx = W * (0.1 + 0.8 * dayK), sy = SEA * (0.75 - Math.sin(Math.PI * (0.15 + 0.7 * dayK)) * 0.55);
+  ctx.fillStyle = dayK > 0.8 ? '#ff7b39' : '#ffd100';
+  ctx.beginPath(); ctx.arc(sx, sy, Math.max(18, SEA * 0.09), 0, 7); ctx.fill();
+
+  // Atoll islet with coconut palms (te ni).
+  const ix = W * 0.78, iw = Math.min(220, W * 0.35);
+  ctx.fillStyle = '#f3e2b3';
+  ctx.beginPath(); ctx.ellipse(ix, SEA + 2, iw / 2, 12, 0, Math.PI, 0); ctx.fill();
+  for (let i = 0; i < 3; i++) palm(ix - iw * 0.25 + i * iw * 0.22, SEA - 6, 40 + i * 8, time + i);
+
+  // Sea.
+  const sea = ctx.createLinearGradient(0, SEA, 0, H);
+  sea.addColorStop(0, lerpColor('1aa6c9', '0e6d8a', dayK));
+  sea.addColorStop(1, lerpColor('063a55', '041f33', dayK));
+  ctx.fillStyle = sea; ctx.fillRect(0, SEA, W, H - SEA);
+
+  // Light rays.
+  ctx.fillStyle = '#ffffff0d';
+  for (let i = 0; i < 5; i++) {
+    const x = ((i * W / 4) + time * 8) % (W + 200) - 100;
+    ctx.beginPath(); ctx.moveTo(x, SEA); ctx.lineTo(x + 40, SEA); ctx.lineTo(x - 60, H); ctx.lineTo(x - 140, H); ctx.fill();
+  }
+
+  // Reef and sand at the bottom.
+  ctx.fillStyle = '#d9c38f55';
+  ctx.beginPath(); ctx.moveTo(0, H);
+  for (let x = 0; x <= W; x += 40) ctx.lineTo(x, H - 14 - Math.sin(x * 0.03) * 8);
+  ctx.lineTo(W, H); ctx.fill();
+  const corals = ['#ff7f7f', '#ffb86b', '#c792ea'];
+  for (let i = 0; i < Math.ceil(W / 90); i++) {
+    const cx = i * 90 + 30, ch = 20 + (i * 37) % 25;
+    ctx.strokeStyle = corals[i % 3]; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cx, H - 10); ctx.lineTo(cx, H - 10 - ch);
+    ctx.moveTo(cx, H - 10 - ch * 0.5); ctx.lineTo(cx - 10, H - 14 - ch * 0.9);
+    ctx.moveTo(cx, H - 10 - ch * 0.4); ctx.lineTo(cx + 11, H - 12 - ch * 0.8); ctx.stroke();
+  }
+}
+
+function palm(x, y, h, time) {
+  const sway = Math.sin(time * 0.8) * 3;
+  ctx.strokeStyle = '#7a5a2e'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + 6, y - h / 2, x + sway, y - h); ctx.stroke();
+  ctx.strokeStyle = '#2e8b3a'; ctx.lineWidth = 3;
+  for (let a = -2.6; a <= -0.4; a += 0.45) {
+    ctx.beginPath(); ctx.moveTo(x + sway, y - h);
+    ctx.quadraticCurveTo(x + sway + Math.cos(a) * 14, y - h + Math.sin(a) * 10 - 4,
+      x + sway + Math.cos(a) * 24, y - h + 8); ctx.stroke();
+  }
+}
+
+function drawWaves(time) {
+  ctx.fillStyle = '#ffffff55';
+  ctx.beginPath(); ctx.moveTo(0, SEA);
+  for (let x = 0; x <= W; x += 10) ctx.lineTo(x, SEA + Math.sin(x * 0.05 + time * 2) * 3);
+  ctx.lineTo(W, SEA + 6); ctx.lineTo(0, SEA + 6); ctx.fill();
+}
+
+function drawBoat(b, time) {
+  const y = SEA - 4 + Math.sin(time * 2 + b.x * 0.02) * 2, x = b.x, tilt = b.vx * 0.0004;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(tilt);
+  // Outrigger (te rama) and booms.
+  ctx.strokeStyle = '#5a3d1e'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(-16, -4); ctx.lineTo(-16, -18); ctx.lineTo(-30, -2);
+  ctx.moveTo(14, -4); ctx.lineTo(14, -18); ctx.lineTo(0, -2); ctx.stroke();
+  // Hull.
+  ctx.fillStyle = '#8b5a2b';
+  ctx.beginPath(); ctx.moveTo(-44, -10); ctx.quadraticCurveTo(0, 14, 44, -10); ctx.lineTo(38, -4);
+  ctx.quadraticCurveTo(0, 6, -38, -4); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#6b4220'; ctx.fillRect(-40, -12, 80, 4);
+  // Sail (te ie).
+  ctx.strokeStyle = '#5a3d1e'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(-4, -12); ctx.lineTo(-4, -70); ctx.stroke();
+  ctx.fillStyle = '#f5ecd2';
+  ctx.beginPath(); ctx.moveTo(-2, -68); ctx.quadraticCurveTo(26, -44, 22, -16); ctx.lineTo(-2, -16); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#c8102e';
+  ctx.beginPath(); ctx.moveTo(-2, -68); ctx.quadraticCurveTo(10, -58, 12, -50); ctx.lineTo(-2, -50); ctx.fill();
+  // Fisher.
+  ctx.fillStyle = '#6b3f1f'; ctx.beginPath(); ctx.arc(22, -26, 6, 0, 7); ctx.fill();
+  ctx.fillStyle = '#c8102e'; ctx.fillRect(17, -20, 10, 10);
+  // Rod.
+  ctx.strokeStyle = '#3b2a17'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(24, -16); ctx.lineTo(26, -36); ctx.stroke();
+  ctx.restore();
+}
+
+function drawLine(b, L) {
+  if (L.state === 'idle') return;
+  const x = b.x + 26, top = SEA - 36, y = SEA + L.y;
+  ctx.strokeStyle = '#ffffffcc'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, y); ctx.stroke();
+  ctx.strokeStyle = '#ddd'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(x - 4, y, 4, 0, Math.PI); ctx.stroke();
+}
+
+function drawFish(f) {
+  const s = f.sp, x = f.x, y = f.y, d = f.hooked ? 0 : f.dir;
+  ctx.save(); ctx.translate(x, y);
+  if (f.hooked) ctx.rotate(-Math.PI / 2 * Math.sign(f.dir || 1));
+  if (d < 0) ctx.scale(-1, 1);
+  if (s.trash) {
+    // Plastic bottle.
+    ctx.rotate(Math.sin(f.phase) * 0.4);
+    ctx.fillStyle = '#bfefffcc'; ctx.strokeStyle = '#7ab'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-12, -6, 20, 12, 4) : ctx.rect(-12, -6, 20, 12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#2a7ad8'; ctx.fillRect(8, -3, 6, 6);
+    ctx.restore(); return;
+  }
+  const r = s.size, wag = Math.sin(f.phase * 2) * r * 0.15;
+  // Tail.
+  ctx.fillStyle = s.color;
+  ctx.beginPath(); ctx.moveTo(-r * 0.8, 0); ctx.lineTo(-r * 1.3, -r * 0.45 + wag); ctx.lineTo(-r * 1.3, r * 0.45 + wag); ctx.fill();
+  if (s.shark) { // dorsal fin
+    ctx.beginPath(); ctx.moveTo(-r * 0.1, -r * 0.3); ctx.lineTo(-r * 0.35, -r * 0.8); ctx.lineTo(-r * 0.45, -r * 0.3); ctx.fill();
+  }
+  if (s.wings) { // flying fish fins
+    ctx.fillStyle = '#9fd4f5';
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-r * 0.6, -r * 0.9 - wag); ctx.lineTo(-r * 0.2, 0); ctx.fill();
+  }
+  // Body.
+  ctx.fillStyle = s.color;
+  ctx.beginPath(); ctx.ellipse(0, 0, r, r * (s.shark ? 0.32 : 0.42), 0, 0, 7); ctx.fill();
+  ctx.fillStyle = s.belly;
+  ctx.beginPath(); ctx.ellipse(r * 0.05, r * 0.15, r * 0.8, r * 0.18, 0, 0, 7); ctx.fill();
+  if (s.stripes) {
+    ctx.strokeStyle = '#1b3a57'; ctx.lineWidth = 2;
+    for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(-r * 0.6, r * 0.1 + i * 3); ctx.lineTo(r * 0.5, r * 0.1 + i * 3); ctx.stroke(); }
+  }
+  // Eye.
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(r * 0.6, -r * 0.08, Math.max(2.5, r * 0.1), 0, 7); ctx.fill();
+  ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(r * 0.63, -r * 0.08, Math.max(1.2, r * 0.05), 0, 7); ctx.fill();
+  if (s.shark) { ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(r * 0.55, r * 0.14); ctx.lineTo(r * 0.85, r * 0.1); ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawBird(bird, time) {
+  if (bird.t > 0) return;
+  const f = Math.sin(time * 6) * 8;
+  ctx.save(); ctx.translate(bird.x, bird.y);
+  ctx.strokeStyle = '#1b1b1b'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-26, f - 4); ctx.quadraticCurveTo(-12, -10, 0, 0); ctx.quadraticCurveTo(12, -10, 26, f - 4); ctx.stroke();
+  ctx.fillStyle = '#c8102e'; ctx.beginPath(); ctx.arc(2, 3, 3, 0, 7); ctx.fill(); // red throat pouch
+  ctx.restore();
+}
+
+function draw(time) {
+  const dayK = G ? Math.min(1, G.t / ROUND_TIME) : 0.2;
+  drawScene(time, dayK);
+  if (G) {
+    drawBird(G.bird, time);
+    for (const f of G.fish) drawFish(f);
+    drawLine(G.boat, G.line);
+    drawWaves(time);
+    drawBoat(G.boat, time);
+    ctx.font = 'bold 18px system-ui, sans-serif'; ctx.textAlign = 'center';
+    for (const p of G.popups) {
+      ctx.globalAlpha = Math.min(1, p.life);
+      ctx.fillStyle = '#0008'; ctx.fillText(p.text, p.x + 1, p.y + 1);
+      ctx.fillStyle = p.color; ctx.fillText(p.text, p.x, p.y);
+    }
+    ctx.globalAlpha = 1;
+  } else {
+    drawWaves(time);
+    drawBoat({ x: W * 0.35 + Math.sin(time * 0.4) * 40, vx: 0 }, time);
+  }
+}
+
+// ---------- HUD & screens ----------
+const $ = id => document.getElementById(id);
+const hud = $('hud');
+function updateHud() {
+  $('score').textContent = '🐟 ' + G.score;
+  $('hooks').textContent = '🪝'.repeat(Math.max(0, G.hooks));
+  $('time').textContent = '☀️ ' + Math.max(0, Math.ceil(ROUND_TIME - G.t));
+}
+function show(id) { ['menu', 'paused', 'over'].forEach(s => $(s).hidden = s !== id); }
+
+function start() {
+  newGame(); state = 'play'; show(null); hud.hidden = false;
+  try { audio && audio.resume(); } catch (e) {}
+}
+function pause() { if (state !== 'play') return; state = 'paused'; show('paused'); }
+function resume() { if (state !== 'paused') return; state = 'play'; show(null); last = performance.now(); }
+function toMenu() { state = 'menu'; G = null; hud.hidden = true; $('bestScore').textContent = best; show('menu'); }
+
+function endGame(reason) {
+  state = 'over'; sfx.end();
+  $('overTitle').textContent = t(reason);
+  $('finalScore').textContent = G.score;
+  const isBest = G.score > best;
+  if (isBest) { best = G.score; try { localStorage.setItem('tewa-best', best); } catch (e) {} }
+  $('newBest').hidden = !isBest;
+  const list = $('catchList'); list.innerHTML = '';
+  for (const s of SPECIES) {
+    const n = G.caught[s.id]; if (!n) continue;
+    const name = s.trash ? (lang === 'ki' ? 'te bwaekaki' : 'Plastic') : `te ${s.id}${lang === 'en' ? ' (' + s.en + ')' : ''}`;
+    list.insertAdjacentHTML('beforeend', `<span>${name}</span><b>× ${n}</b>`);
+  }
+  const facts = FACTS[lang] || FACTS.en;
+  $('factBox').textContent = '💡 ' + facts[Math.floor(Math.random() * facts.length)];
+  show('over');
+}
+
+$('playBtn').onclick = start;
+$('againBtn').onclick = start;
+$('menuBtn').onclick = toMenu;
+$('quitBtn').onclick = toMenu;
+$('pauseBtn').onclick = pause;
+$('resumeBtn').onclick = resume;
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+
+// ---------- Main loop ----------
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+  if (state === 'play') { update(dt); if (state === 'play') updateHud(); }
+  draw(now / 1000);
+  requestAnimationFrame(loop);
+}
+
+applyLang(); $('bestScore').textContent = best;
+requestAnimationFrame(loop);
+
+// Offline support: cache the game after the first visit.
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
