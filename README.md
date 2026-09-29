@@ -22,6 +22,14 @@ and bring home the best catch before sunset.
 
 Bigger fish score more, but they take longer to reel in. That gives sharks more time to steal them.
 
+## Coins and Shop
+- **Gold coins** float in the lagoon. Touch one with your fishing line to collect it. Most coins are worth 1, and big glowing coins deeper down are worth 5.
+- You also earn **+2 coins** for each correct quiz answer and **+5 coins** for each new Fish Book discovery.
+- Coins are saved in a wallet on the device and spent in the **Shop**:
+  - **Sails:** Pandanus (free), Lagoon (20), Sunset (40), Kiribati flag (60), Golden (100).
+  - **Upgrades:** Extra hook, 4 hooks per round (80). Fast reel, reel in 30% faster (120).
+- These are game coins only. There is no real money and nothing to buy, so the game stays safe for children.
+
 ## Learning features (for students and teachers)
 - **Fish Book.** The first time a player catches or meets a creature, the game pauses and shows a fact card with an animated picture, its Kiribati name, its English name and three simple facts. Cards collect in the Fish Book on the menu, so children can try to find all 7.
 - **Bonus quiz after every round.** 3 questions (4 in 2-player mode, where players take turns). Each correct answer is worth +10 points and shows a short explanation. There is always one maths question built from fishing, plus questions about Kiribati geography and culture, ocean life, protecting the environment, and Kiribati words.
