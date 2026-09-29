@@ -23,7 +23,8 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--deep); color: var(--text); font-family: var(--body);
     overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
-  canvas { display: block; position: fixed; inset: 0; width: 100%; height: 100%; }
+  canvas { display: block; }
+  #c { position: fixed; inset: 0; width: 100%; height: 100%; }
   button { font: inherit; color: inherit; border: 0; cursor: pointer; }
   button:focus-visible, input:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
   [hidden] { display: none !important; }
@@ -57,6 +58,7 @@
   .panel { width: 100%; max-width: 440px; max-height: 100%; overflow-y: auto; background: var(--panel);
     border: 1px solid var(--edge); border-radius: 22px; padding: 22px; backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px); box-shadow: 0 24px 60px rgba(0, 0, 0, .45); display: flex; flex-direction: column; gap: 14px; }
+  .panel > * { flex-shrink: 0; }
   .brand { display: flex; flex-direction: column; gap: 2px; }
   .brand h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(52px, 14vw, 72px); line-height: .95;
     color: var(--sand); letter-spacing: .02em; text-shadow: 0 3px 0 #b8542f, 0 8px 24px rgba(0,0,0,.35); }
@@ -112,6 +114,32 @@
   .fact { background: rgba(63, 193, 201, .12); border: 1px solid rgba(63, 193, 201, .3); border-radius: 12px; padding: 10px 12px; font-size: 14px; line-height: 1.45; }
   .fact b { color: var(--lagoon); display: block; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; margin-bottom: 2px; }
   .badge { align-self: center; background: var(--sun); color: #3a2400; font-weight: 900; border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+  .answers { display: grid; gap: 8px; }
+  .ans { text-align: left; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.07); border: 1px solid var(--edge); font-weight: 800; font-size: 16px; }
+  .ans:hover:not(:disabled) { background: rgba(255,255,255,.13); }
+  .ans:disabled { cursor: default; }
+  .ans.right { background: rgba(53,179,107,.35); border-color: #35b36b; }
+  .ans.wrong { background: rgba(232,85,61,.35); border-color: var(--coral); }
+  .q { font-size: 24px; line-height: 1.2; }
+  .fact.ok { background: rgba(53,179,107,.14); border-color: rgba(53,179,107,.5); }
+  .fact.ok b { color: #6fe0a0; }
+  .fact.bad { background: rgba(232,85,61,.14); border-color: rgba(232,85,61,.5); }
+  .fact.bad b { color: #ff9a8a; }
+  .who-chip { display: inline-flex; gap: 6px; align-items: center; font-weight: 800; }
+  .who-chip i { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+  #cardArt { width: 100%; height: 150px; border-radius: 14px; display: block; }
+  .sub { margin: -8px 0 0; color: var(--muted); font-weight: 700; }
+  .facts { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; line-height: 1.45; }
+  .book { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+  .book button { background: rgba(255,255,255,.06); border: 1px solid var(--edge); border-radius: 12px; padding: 8px;
+    display: flex; flex-direction: column; gap: 2px; align-items: center; min-width: 0; }
+  .book button:hover { background: rgba(255,255,255,.12); }
+  .book canvas { width: 100%; height: 60px; }
+  .book b { font-size: 14px; }
+  .book small { color: var(--muted); font-size: 12px; font-weight: 700; }
+  .book button.locked { opacity: .5; }
+  .progress { height: 8px; border-radius: 4px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--lagoon), #6fe0a0); }
   @media (prefers-reduced-motion: reduce) { .mode { transition: none; } }
 </style>
 </head>
@@ -144,7 +172,13 @@
     </div>
     <div class="meta"><span data-t="best"></span><b id="bestScore">0</b></div>
     <div class="row">
+      <button class="btn" id="bookBtn" data-t="bookBtn"></button>
       <button class="btn" id="howBtn" data-t="howBtn"></button>
+    </div>
+    <div class="row">
+      <div class="seg" role="group" aria-label="Age level">
+        <button data-level="junior" data-t="junior"></button><button data-level="senior" data-t="senior"></button>
+      </div>
       <div class="seg" role="group" aria-label="Language">
         <button data-lang="ki">Kiribati</button><button data-lang="en">English</button>
       </div>
@@ -197,15 +231,47 @@
   </div>
 </div>
 
+<div class="screen" id="quiz" hidden>
+  <div class="panel">
+    <div class="meta"><span class="label" id="qLabel"></span><span class="who-chip" id="qWho"></span></div>
+    <div class="progress"><i id="qBar"></i></div>
+    <h2 class="q" id="qText"></h2>
+    <div class="answers" id="qAnswers"></div>
+    <div class="fact" id="qWhy" hidden><b id="qVerdict"></b><span id="qWhyTxt"></span></div>
+    <button class="btn primary" id="qNext" hidden></button>
+  </div>
+</div>
+
+<div class="screen" id="card" hidden>
+  <div class="panel">
+    <div class="label" id="cardLabel"></div>
+    <canvas id="cardArt"></canvas>
+    <h2 id="cardName"></h2>
+    <p class="sub" id="cardEn"></p>
+    <ul class="facts" id="cardFacts"></ul>
+    <button class="btn primary" id="cardGo"></button>
+  </div>
+</div>
+
+<div class="screen" id="book" hidden>
+  <div class="panel">
+    <h2 data-t="bookTitle"></h2>
+    <p class="sub" id="bookCount" style="margin:0"></p>
+    <div class="book" id="bookGrid"></div>
+    <button class="btn primary" id="practiceBtn" data-t="practice"></button>
+    <button class="btn" data-back data-t="back"></button>
+  </div>
+</div>
+
 <div class="screen" id="results" hidden>
   <div class="panel">
     <h2 id="resTitle"></h2>
     <div id="resSolo">
       <div class="big" id="resScore">0</div>
-      <div class="stats"><span><b id="resFish">0</b><span data-t="fish"></span></span><span><b id="resKg">0</b>kg</span></div>
+      <div class="stats"><span><b id="resFish">0</b><span data-t="fish"></span></span><span><b id="resKg">0</b>kg</span><span><b id="resQuiz">0</b><span data-t="quiz"></span></span></div>
     </div>
     <span class="badge" id="resBest" data-t="newBest" hidden></span>
-    <table id="resTable" hidden><thead><tr><th data-t="player"></th><th data-t="fish"></th><th>kg</th><th data-t="points"></th></tr></thead><tbody></tbody></table>
+    <table id="resTable" hidden><thead><tr><th data-t="player"></th><th data-t="fish"></th><th>kg</th><th data-t="quiz"></th><th data-t="points"></th></tr></thead><tbody></tbody></table>
     <div class="catch" id="resCatch"></div>
     <div class="fact"><b data-t="didYouKnow"></b><span id="resFact"></span></div>
     <button class="btn primary" id="againBtn" data-t="again"></button>
@@ -241,6 +307,8 @@ const TEXT = {
       'Te on (sea turtles) are protected. Hooking one costs 5 points.',
       'Hook plastic rubbish to clean the lagoon for 3 bonus points.',
       'You have 3 hooks. The round ends at sunset.',
+      'When you find a new sea creature, a card teaches you about it. Collect them all in your Fish Book.',
+      'After each round, answer the bonus quiz. Every correct answer is worth 10 points.',
     ],
     keysSolo: 'Keyboard: ← → to move, Space or ↓ to drop the line, P to pause.',
     keysVs: 'Two players on one screen: the left half of the screen steers the red canoe and the right half steers the blue canoe. Drag to move, tap to drop your line. Keyboard: red uses A D and S, blue uses ← → and ↓.',
@@ -257,6 +325,13 @@ const TEXT = {
     cleaned: 'Clean lagoon +3', lineCut: 'Shark cut your line!', stolen: 'Shark stole your fish!', turtle: 'Let te on go free −5',
     plastic: 'plastic', turtleName: 'Sea turtle', sharkName: 'Blacktip shark',
     p: 'Player {n}', red: 'Red', blue: 'Blue',
+    bookBtn: 'Fish Book', bookTitle: 'Fish Book', howBtnShort: 'How to play', junior: 'Age 6–9', senior: 'Age 10–14',
+    bookCount: 'You have discovered {n} of {total}. Catch or meet new sea creatures to fill your book.',
+    locked: 'Not found yet', newFind: 'New discovery!', fromBook: 'Fish Book', keepFishing: 'Keep fishing', close: 'Close',
+    practice: 'Practice quiz', quiz: 'quiz', bonusQuiz: 'Bonus quiz · {i} of {n}', practiceQuiz: 'Practice quiz · {i} of {n}',
+    right: 'Correct! +10 points', rightPractice: 'Correct!', wrong: 'Not quite. The answer is: {a}',
+    next: 'Next question', finish: 'See results', practiceDone: 'You got {c} out of {n}!', backToBook: 'Back to Fish Book',
+    answerFor: '{name} answers',
   },
   ki: {
     tagline: 'Te akawa n te wa i Kiribati',
@@ -265,6 +340,7 @@ const TEXT = {
     start: 'Moanna', paused: 'Toki teutana', resume: 'Akawa riki', again: 'Takaakaro riki',
     sunset: 'E a bwaka te taai. Ko rabwa!', go: 'Akawa!', fish: 'ika', menu: 'Te moan', back: 'Okira',
     ready: 'I a tauraoi',
+    right: 'Eng! +10', rightPractice: 'Eng!', next: 'Te titiraki riki',
   },
 };
 const FACTS = {
@@ -305,6 +381,9 @@ function applyLang() {
   $('keysTxt').textContent = t('keysSolo') + ' ' + t('keysVs');
 }
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { lang = b.dataset.lang; store.set('tewa-lang', lang); applyLang(); });
+let level = store.get('tewa-level') || 'junior';
+function applyLevel() { document.querySelectorAll('[data-level]').forEach(b => b.setAttribute('aria-pressed', b.dataset.level === level)); }
+document.querySelectorAll('[data-level]').forEach(b => b.onclick = () => { level = b.dataset.level; store.set('tewa-level', level); applyLevel(); });
 
 // ============ Sound (generated, nothing to download) ============
 let AC = null, noiseBuf = null, muted = store.get('tewa-muted') === '1';
@@ -370,12 +449,73 @@ const SPECIES = {
   plastic: { en: 'Plastic', kind: 'trash', len: 13, speed: 16, depth: [0.03, 0.85], trash: true },
 };
 const CATCHABLE = ['baneawa', 'ati', 'onauti'];
+
+// Fish Book: a card for each creature, unlocked the first time you meet it.
+const BOOK_ORDER = ['baneawa', 'ati', 'onauti', 'bakoa', 'on', 'eitei', 'plastic'];
+const BOOK = {
+  baneawa: { name: 'te baneawa', en: 'Milkfish', facts: [
+    'Milkfish live in lagoons and eat algae (tiny sea plants) and plankton.',
+    'Families on Tarawa and other islands raise milkfish in ponds.',
+    'They swim together in groups called schools.'] },
+  ati: { name: 'te ati', en: 'Skipjack tuna', facts: [
+    'Skipjack tuna swim in huge schools in the open ocean.',
+    'Tuna must keep swimming all the time. Moving pushes water over their gills so they can breathe.',
+    'Look for the dark stripes on its belly. Skipjack is the most important fish for the economy of Kiribati.'] },
+  onauti: { name: 'te onauti', en: 'Flying fish', facts: [
+    'Flying fish escape from hunters by jumping out of the water and gliding on their big fins.',
+    'They can glide for more than 50 metres over the waves.',
+    'In Kiribati they are traditionally caught at night, using lights from canoes.'] },
+  bakoa: { name: 'te bakoa', en: 'Blacktip reef shark', facts: [
+    'Blacktip reef sharks have black tips on their fins.',
+    'They help keep the reef healthy by eating sick and weak fish.',
+    'They are shy and rarely hurt people. Give them space and respect.'] },
+  on: { name: 'te on', en: 'Green sea turtle', facts: [
+    'Green sea turtles eat seagrass and algae.',
+    'Turtles can think a plastic bag is a jellyfish and eat it. Plastic can kill them.',
+    'Sea turtles are protected. If one is caught by accident, let it go gently.'] },
+  eitei: { name: 'te eitei', en: 'Frigatebird', facts: [
+    'The frigatebird is on the flag of Kiribati.',
+    'Its feathers are not waterproof, so it cannot land on the sea. It can stay in the air for days or even weeks.',
+    'Males puff up a bright red throat pouch to attract a partner.'] },
+  plastic: { name: 'Plastic rubbish', en: 'Not a living thing', facts: [
+    'A plastic bottle can take hundreds of years to break down in the sea.',
+    'Plastic hurts fish, turtles and seabirds that eat it or get caught in it.',
+    'You can help: pick up rubbish, use less plastic and always put rubbish in a bin.'] },
+};
+
+// Quiz bank. The first answer is the correct one; answers are shuffled when shown.
+const QUIZ = [
+  { q: 'How many atolls and reef islands does Kiribati have?', a: ['33', '12', '50', '100'], why: 'Kiribati has 33 atolls and reef islands in three groups: the Gilbert, Phoenix and Line Islands.' },
+  { q: 'What is the capital of Kiribati?', a: ['Tarawa', 'Suva', 'Apia', 'Honiara'], why: 'The capital is South Tarawa. Suva is in Fiji, Apia is in Samoa and Honiara is in Solomon Islands.' },
+  { q: 'Which bird is on the flag of Kiribati?', a: ['Frigatebird (te eitei)', 'Seagull', 'Parrot', 'Eagle'], why: 'The frigatebird flies over a rising sun on the flag.' },
+  { q: 'Which ocean is Kiribati in?', a: ['Pacific Ocean', 'Indian Ocean', 'Atlantic Ocean', 'Arctic Ocean'], why: 'Kiribati is spread across the middle of the Pacific Ocean.' },
+  { q: 'On which date is Kiribati Independence Day?', a: ['12 July', '1 January', '25 December', '4 July'], why: 'Kiribati became independent on 12 July 1979.', level: 'senior' },
+  { q: 'What does "Mauri" mean?', a: ['Hello', 'Goodbye', 'Fish', 'Canoe'], why: '"Mauri" is how people say hello in Kiribati.' },
+  { q: 'What does "Ko rabwa" mean?', a: ['Thank you', 'Good night', 'Sorry', 'Hello'], why: '"Ko rabwa" means thank you.' },
+  { q: 'What is "te bakoa"?', a: ['A shark', 'A canoe', 'A turtle', 'A bird'], why: 'Te bakoa is a shark.' },
+  { q: 'What is "te wa"?', a: ['A canoe', 'A fish', 'The sun', 'A house'], why: 'Te wa is a canoe. That is the name of this game!' },
+  { q: 'What is "te on"?', a: ['A sea turtle', 'A shark', 'A coconut', 'A star'], why: 'Te on is a sea turtle.' },
+  { q: 'What is "te ati"?', a: ['Skipjack tuna', 'Flying fish', 'Milkfish', 'Shark'], why: 'Te ati is the skipjack tuna.' },
+  { q: 'Which fish can glide above the water?', a: ['Flying fish (te onauti)', 'Skipjack tuna (te ati)', 'Milkfish (te baneawa)', 'Shark (te bakoa)'], why: 'Flying fish glide on their big fins to escape from hunters.' },
+  { q: 'Why can plastic bags kill sea turtles?', a: ['Turtles think they are jellyfish and eat them', 'They make the water too hot', 'They scare the fish away', 'They block the sunlight'], why: 'A floating plastic bag looks like a jellyfish, which turtles eat.' },
+  { q: 'What should you do with rubbish at the beach?', a: ['Put it in a bin', 'Throw it in the sea', 'Bury it in the sand', 'Leave it there'], why: 'Rubbish in a bin cannot wash into the sea and hurt animals.' },
+  { q: 'What do green sea turtles eat?', a: ['Seagrass and algae', 'Coconuts', 'Sharks', 'Plastic'], why: 'Green sea turtles graze on seagrass and algae.' },
+  { q: 'Traditional navigators found their way across the ocean using...', a: ['stars, waves and birds', 'maps on phones', 'road signs', 'a television'], why: 'I-Kiribati navigators read the stars, the ocean swell and the flight of birds.' },
+  { q: 'Why is the frigatebird unable to land on the sea?', a: ['Its feathers are not waterproof', 'It is afraid of fish', 'Its legs are too long', 'The sea is too cold'], why: 'Wet feathers would make it too heavy to fly, so it stays in the air.' },
+  { q: 'Why are rising seas a big danger for Kiribati?', a: ['Most land is less than 3 metres above sea level', 'The islands are very cold', 'There are too many fish', 'The sea is too salty'], why: 'Higher seas bring flooding and salt water onto low islands.', level: 'senior' },
+  { q: 'Coral reefs are built by...', a: ['tiny animals called coral polyps', 'volcanoes', 'sea turtles', 'seaweed'], why: 'Coral polyps build hard skeletons that grow into reefs over many years.', level: 'senior' },
+  { q: 'Why must tuna keep swimming?', a: ['To push water over their gills to breathe', 'To stay warm', 'To keep their stripes', 'To sleep'], why: 'Tuna breathe by swimming with their mouths open.', level: 'senior' },
+  { q: 'Which part of Kiribati sees each new day first?', a: ['The Line Islands', 'Tarawa', 'The Phoenix Islands', 'Banaba'], why: 'The Line Islands use UTC+14, the earliest time zone on Earth.', level: 'senior' },
+  { q: 'How do blacktip reef sharks help the reef?', a: ['They eat sick and weak fish', 'They build coral', 'They clean up plastic', 'They make sand'], why: 'By removing sick fish, sharks keep fish populations healthy.', level: 'senior' },
+  { q: 'What is the Phoenix Islands Protected Area?', a: ['A huge marine park where sea life is protected', 'A fishing competition', 'An airport', 'A school'], why: 'It is one of the largest marine protected areas in the world and a UNESCO World Heritage Site.', level: 'senior' },
+];
 const PLAYER_COLORS = ['#e8553d', '#3d8fe8', '#f2b705', '#35b36b'];
 const MAX_HOOKS = 3;
 const MODE_TIME = { solo: 90, versus: 90, turns: 60 };
 
 // ============ Canvas & world ============
-const cv = $('c'), ctx = cv.getContext('2d');
+const cv = $('c');
+let ctx = cv.getContext('2d');
 let W = 0, H = 0, SEA = 0, DEPTH = 0, U = 1, DPR = 1;
 const world = { clouds: [], isles: [], corals: [], grass: [], rocks: [], motes: [] };
 
@@ -593,12 +733,13 @@ function land(p) {
   splash(hx, SEA, 12, 1);
   if (f.sp.trash) {
     p.score += 3; p.caught.plastic = (p.caught.plastic || 0) + 1; sfx.clean();
-    popup(p.boat.x, SEA - 95 * U, t('cleaned'), '#8ff0b0');
+    popup(p.boat.x, SEA - 95 * U, t('cleaned'), '#8ff0b0'); discover('plastic');
   } else {
     const pts = Math.round(f.sp.base + f.kg * f.sp.perKg);
     p.score += pts; p.kg += f.kg; p.count++;
     p.caught[f.id] = (p.caught[f.id] || 0) + 1; sfx.land();
     popup(p.boat.x, SEA - 95 * U, `+${pts}  te ${f.id} · ${f.kg} kg`, '#ffd76a');
+    discover(f.id);
   }
 }
 
@@ -649,11 +790,11 @@ function checkHook(p, f) {
   if (!hits(f, hx, hy)) return;
   if (f.sp.kind === 'shark') {
     p.hooks--; L.state = 'up'; L.y = Math.min(L.y, 30 * U); sfx.cut();
-    splash(hx, hy, 8, 0.3); popup(p.boat.x, SEA - 95 * U, t('lineCut'), '#ff9a8a');
+    splash(hx, hy, 8, 0.3); popup(p.boat.x, SEA - 95 * U, t('lineCut'), '#ff9a8a'); discover('bakoa');
   } else if (f.sp.kind === 'turtle') {
     if (f.flee > 0) return;
     p.score = Math.max(0, p.score - 5); L.state = 'up'; f.flee = 2.5; sfx.turtle();
-    popup(p.boat.x, SEA - 95 * U, t('turtle'), '#9fe3ff');
+    popup(p.boat.x, SEA - 95 * U, t('turtle'), '#9fe3ff'); discover('on');
   } else {
     f.hooked = true; L.fish = f; L.state = 'up'; sfx.bite();
   }
@@ -671,7 +812,7 @@ function separateBoats() {
 function updateAmbient(dt) {
   for (const c of world.clouds) { c.x += c.v * U * dt; if (c.x > W + 120 * c.s) c.x = -120 * c.s; }
   const bd = G.bird; bd.t -= dt;
-  if (bd.t <= 0) { bd.x += 70 * U * dt; bd.y = SEA * 0.28 + Math.sin(G.t * 0.9) * 12 * U;
+  if (bd.t <= 0) { bd.x += 70 * U * dt; if (bd.x > W * 0.4) discover('eitei'); bd.y = SEA * 0.28 + Math.sin(G.t * 0.9) * 12 * U;
     if (bd.x > W + 120) { bd.x = -120; bd.t = rand(9, 18); } }
   const tn = G.terns; tn.t -= dt;
   if (tn.t <= 0) { tn.x -= 55 * U * dt; if (tn.x < -150) { tn.x = W + 150; tn.t = rand(12, 22); } }
@@ -1190,7 +1331,7 @@ function updateHud() {
 }
 
 // ============ Screens & flow ============
-const SCREENS = ['menu', 'how', 'setup', 'paused', 'turnEnd', 'results'];
+const SCREENS = ['menu', 'how', 'setup', 'paused', 'turnEnd', 'results', 'quiz', 'card', 'book'];
 function show(id) { for (const s of SCREENS) $(s).hidden = s !== id; $('hud').hidden = !(id === null || id === 'paused') || !G; }
 
 function defaultName(i) { return mode === 'versus' ? [t('red'), t('blue')][i] : t('p', { n: i + 1 }); }
@@ -1247,7 +1388,7 @@ function pause() { if (state !== 'play' && state !== 'countdown') return; G.prev
 function resume() { if (state !== 'paused') return; state = G.prev || 'play'; show(null); last = performance.now(); }
 function toMenu() { state = 'menu'; G = null; pointers.clear(); $('bestScore').textContent = best; show('menu'); }
 $('pauseBtn').onclick = pause; $('resumeBtn').onclick = resume; $('quitBtn').onclick = toMenu; $('menuBtn').onclick = toMenu;
-$('againBtn').onclick = () => { if (mode === 'solo') startSolo(); else if (mode === 'versus') startVersus(G_lastNames); else { roster.forEach(r => { r.score = 0; r.kg = 0; r.count = 0; r.caught = {}; }); turnIndex = 0; startTurn(); } };
+$('againBtn').onclick = () => { if (mode === 'solo') startSolo(); else if (mode === 'versus') startVersus(G_lastNames); else { roster.forEach(r => { r.score = 0; r.kg = 0; r.count = 0; r.caught = {}; r.quiz = 0; }); turnIndex = 0; startTurn(); } };
 $('teGo').onclick = () => startTurn();
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 let G_lastNames = [];
@@ -1264,10 +1405,16 @@ function randomFact() { const f = FACTS[lang] || FACTS.en; return f[Math.floor(M
 
 function endRound(reason) {
   state = 'over'; sfx.end(); pointers.clear();
+  for (const p of G.players) p.quiz = 0;
+  const n = mode === 'versus' ? 4 : 3;
+  setTimeout(() => runQuiz(G.players, n, false, () => finishRound(reason)), 700);
+}
+
+function finishRound(reason) {
   const ps = G.players;
   if (mode === 'turns') {
     const p = ps[0], r = roster[turnIndex];
-    Object.assign(r, { score: p.score, kg: p.kg, count: p.count, caught: p.caught });
+    Object.assign(r, { score: p.score, kg: p.kg, count: p.count, caught: p.caught, quiz: p.quiz });
     turnIndex++;
     if (turnIndex < roster.length) {
       $('teTitle').textContent = t('turnOver', { name: r.name });
@@ -1291,6 +1438,7 @@ function showResults(list, reason) {
     const p = list[0];
     $('resTitle').textContent = t(reason);
     $('resScore').textContent = p.score; $('resFish').textContent = p.count; $('resKg').textContent = p.kg.toFixed(1);
+    $('resQuiz').textContent = `${p.quiz}/3`;
     if (p.score > best) { best = p.score; store.set('tewa-best', best); $('resBest').hidden = false; }
     catchChips($('resCatch'), p.caught);
   } else {
@@ -1303,7 +1451,7 @@ function showResults(list, reason) {
       const who = document.createElement('td'), w = document.createElement('div'), dot = document.createElement('i'), nm = document.createElement('span');
       w.className = 'who'; w.style.setProperty('--c', p.color); nm.textContent = `${i + 1}. ${p.name}`; w.append(dot, nm); who.append(w);
       tr.append(who);
-      for (const v of [p.count, p.kg.toFixed(1), p.score]) { const td = document.createElement('td'); td.textContent = v; tr.append(td); }
+      for (const v of [p.count, p.kg.toFixed(1), p.quiz || 0, p.score]) { const td = document.createElement('td'); td.textContent = v; tr.append(td); }
       tb.appendChild(tr);
     });
     catchChips($('resCatch'), all);
@@ -1312,6 +1460,156 @@ function showResults(list, reason) {
   show('results');
 }
 
+// ============ Fish Book & discovery cards ============
+let book = {};
+try { book = JSON.parse(store.get('tewa-book') || '{}') || {}; } catch (e) { book = {}; }
+let cardView = null;   // { id, fromGame } while a card is open
+
+function discover(id) {
+  if (book[id] || !BOOK[id]) return;
+  book[id] = true; store.set('tewa-book', JSON.stringify(book));
+  if (state === 'play') { state = 'card'; openCard(id, true); }
+}
+function openCard(id, fromGame) {
+  const b = BOOK[id];
+  cardView = { id, fromGame };
+  $('cardLabel').textContent = fromGame ? t('newFind') : t('fromBook');
+  $('cardName').textContent = b.name; $('cardEn').textContent = b.en;
+  const ul = $('cardFacts'); ul.textContent = '';
+  for (const f of b.facts) { const li = document.createElement('li'); li.textContent = f; ul.appendChild(li); }
+  $('cardGo').textContent = fromGame ? t('keepFishing') : t('close');
+  if (fromGame) tone(784, 0.12, 'triangle', 0.1), tone(1175, 0.2, 'triangle', 0.1, 0, 0.1);
+  show('card');
+  sizeCanvas($('cardArt'));
+}
+$('cardGo').onclick = () => {
+  const fromGame = cardView && cardView.fromGame; cardView = null;
+  if (fromGame && G) { state = 'play'; show(null); last = performance.now(); } else openBook();
+};
+
+function sizeCanvas(c) {
+  const r = c.getBoundingClientRect();
+  c.width = Math.max(1, Math.round(r.width * DPR)); c.height = Math.max(1, Math.round(r.height * DPR));
+}
+// Draw a creature onto a small canvas by pointing the scene drawing code at that canvas.
+function paintCreature(c, id, tm, locked) {
+  const main = ctx, mainU = U;
+  const w = c.width / DPR, h = c.height / DPR;
+  ctx = c.getContext('2d'); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const g = ctx.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, id === 'eitei' ? '#7cc4ec' : '#1a9dbb'); g.addColorStop(1, id === 'eitei' ? '#d4effb' : '#0a4f6e');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+  U = Math.min(w / 300, h / 130) * 1.1;
+  ctx.save(); ctx.translate(w / 2, h / 2);
+  if (locked) ctx.filter = 'brightness(0) opacity(0.45)';
+  const size = Math.min(w * 0.3, h * 0.42);
+  if (id === 'eitei') drawFrigatebird(0, -h * 0.05, tm, size / 30);
+  else if (id === 'on') { ctx.translate(-size * 0.1, 0); drawTurtle(size, tm * 3); }
+  else if (id === 'plastic') { drawTrash({ r: size * 0.5, phase: tm, variant: 1 }); }
+  else {
+    const sp = SPECIES[id], r = id === 'bakoa' ? size * 1.1 : size;
+    ctx.translate(r * 0.18, 0);
+    drawFishShape(sp, r, Math.sin(tm * 4) * r * 0.1);
+  }
+  ctx.restore();
+  ctx = main; U = mainU;
+}
+
+function openBook() {
+  const grid = $('bookGrid'); grid.textContent = '';
+  let found = 0;
+  for (const id of BOOK_ORDER) {
+    const open = !!book[id]; if (open) found++;
+    const btn = document.createElement('button'); if (!open) btn.className = 'locked';
+    const c = document.createElement('canvas'), b = document.createElement('b'), sm = document.createElement('small');
+    b.textContent = open ? BOOK[id].name : '?'; sm.textContent = open ? BOOK[id].en : t('locked');
+    btn.append(c, b, sm); grid.appendChild(btn);
+    if (open) btn.onclick = () => openCard(id, false); else btn.disabled = true;
+    btn._paint = () => { sizeCanvas(c); paintCreature(c, id, 1, !open); };
+  }
+  $('bookCount').textContent = t('bookCount', { n: found, total: BOOK_ORDER.length });
+  show('book');
+  grid.querySelectorAll('button').forEach(b => b._paint());
+}
+$('bookBtn').onclick = openBook;
+
+// ============ Quiz ============
+let asked = new Set();
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const num = x => String(Math.round(x * 10) / 10);
+
+function mathQuestion() {
+  const junior = [
+    () => { const a = ri(2, 7), b = ri(1, 6); return { q: `You catch ${a} milkfish and ${b} skipjack. How many fish is that?`, n: a + b, why: `${a} + ${b} = ${a + b}` }; },
+    () => { const a = ri(1, 2); return { q: `You have 3 hooks. A shark cuts ${a} of your lines. How many hooks are left?`, n: 3 - a, why: `3 − ${a} = ${3 - a}` }; },
+    () => { const a = ri(7, 12), b = ri(2, 6); return { q: `There are ${a} fish in a school. ${b} swim away. How many are left?`, n: a - b, why: `${a} − ${b} = ${a - b}` }; },
+    () => { const a = ri(2, 5); return { q: `Each plastic bottle you clean up gives 3 points. You clean up ${a} bottles. How many points is that?`, n: a * 3, why: `${a} × 3 = ${a * 3}` }; },
+  ];
+  const senior = [
+    () => { const n = ri(2, 5), w = ri(2, 7); return { q: `You catch ${n} skipjack. Each one weighs ${w} kg. What is the total weight in kg?`, n: n * w, why: `${n} × ${w} = ${n * w} kg` }; },
+    () => { const k = ri(2, 8); return { q: `A skipjack scores 6 points plus 3 points for every kg. How many points is a ${k} kg skipjack worth?`, n: 6 + 3 * k, why: `6 + 3 × ${k} = ${6 + 3 * k}` }; },
+    () => { const a = ri(11, 29) / 10, b = ri(11, 29) / 10, s = Math.round((a + b) * 10) / 10; return { q: `One milkfish weighs ${a} kg and another weighs ${b} kg. What is their total weight in kg?`, n: s, dec: true, why: `${a} + ${b} = ${num(s)} kg` }; },
+    () => { const sc = ri(20, 60), tt = ri(1, 3); return { q: `Your score is ${sc}. You hook ${tt} turtle${tt > 1 ? 's' : ''} and lose 5 points each time. What is your score now?`, n: sc - 5 * tt, why: `${sc} − 5 × ${tt} = ${sc - 5 * tt}` }; },
+    () => ({ q: 'A round of Te Wa lasts 90 seconds. How many minutes is that?', n: 1.5, dec: true, why: '90 ÷ 60 = 1.5 minutes' }),
+  ];
+  const m = pick(level === 'senior' ? senior : junior)();
+  const step = m.dec ? 0.5 : m.n >= 20 ? 3 : 1;
+  const opts = new Set([num(m.n)]);
+  for (const o of [1, -1, 2, -2, 3, -3, 4]) { if (opts.size >= 4) break; const v = m.n + o * step; if (v >= 0) opts.add(num(v)); }
+  return { q: m.q, a: [...opts], why: m.why };
+}
+function buildQuestions(n) {
+  const bank = QUIZ.filter(q => level === 'senior' || q.level !== 'senior');
+  let pool = bank.filter(q => !asked.has(q.q));
+  if (pool.length < n) { asked.clear(); pool = bank.slice(); }
+  const out = [mathQuestion()];
+  while (out.length < n && pool.length) { const q = pool.splice(Math.floor(Math.random() * pool.length), 1)[0]; asked.add(q.q); out.push(q); }
+  return out.sort(() => Math.random() - 0.5);
+}
+
+function runQuiz(players, n, practice, done) {
+  const qs = buildQuestions(n); let i = 0, correct = 0;
+  const next = () => {
+    if (i >= qs.length) {
+      if (!practice) return done();
+      $('qLabel').textContent = ''; $('qWho').textContent = ''; $('qAnswers').textContent = ''; $('qWhy').hidden = true;
+      $('qBar').style.width = '100%';
+      $('qText').textContent = t('practiceDone', { c: correct, n: qs.length });
+      $('qNext').hidden = false; $('qNext').textContent = t('backToBook'); $('qNext').onclick = openBook;
+      return;
+    }
+    const q = qs[i], p = players[i % players.length];
+    $('qLabel').textContent = t(practice ? 'practiceQuiz' : 'bonusQuiz', { i: i + 1, n: qs.length });
+    const who = $('qWho'); who.textContent = '';
+    if (players.length > 1) { const dot = document.createElement('i'); who.style.setProperty('--c', p.color); who.append(dot, t('answerFor', { name: p.name })); }
+    $('qBar').style.width = `${(i / qs.length) * 100}%`;
+    $('qText').textContent = q.q;
+    $('qWhy').hidden = true; $('qNext').hidden = true;
+    const box = $('qAnswers'); box.textContent = '';
+    const answers = q.a.slice().sort(() => Math.random() - 0.5);
+    for (const a of answers) {
+      const b = document.createElement('button'); b.className = 'ans'; b.textContent = a;
+      b.onclick = () => {
+        const ok = a === q.a[0];
+        box.querySelectorAll('button').forEach(x => { x.disabled = true; if (x.textContent === q.a[0]) x.classList.add('right'); });
+        if (ok) { correct++; if (!practice) { p.score += 10; p.quiz = (p.quiz || 0) + 1; } tone(660, 0.1, 'triangle', 0.1); tone(990, 0.18, 'triangle', 0.1, 0, 0.1); }
+        else { b.classList.add('wrong'); tone(220, 0.25, 'sine', 0.1); }
+        const why = $('qWhy'); why.hidden = false; why.className = 'fact ' + (ok ? 'ok' : 'bad');
+        $('qVerdict').textContent = ok ? t(practice ? 'rightPractice' : 'right') : t('wrong', { a: q.a[0] });
+        $('qWhyTxt').textContent = q.why || '';
+        i++;
+        $('qNext').hidden = false; $('qNext').textContent = i >= qs.length && !practice ? t('finish') : t('next');
+        $('qNext').onclick = next; $('qNext').focus();
+      };
+      box.appendChild(b);
+    }
+    show('quiz');
+  };
+  next();
+}
+$('practiceBtn').onclick = () => runQuiz([{ name: '', color: PLAYER_COLORS[0] }], 5, true, openBook);
+
 // ============ Main loop ============
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
@@ -1319,10 +1617,11 @@ function loop(now) {
   if (G && (state === 'play' || state === 'countdown')) { update(dt); if (G && (state === 'play' || state === 'countdown')) updateHud(); }
   else if (!G) { for (const c of world.clouds) c.x = (c.x + c.v * U * dt) % (W + 200); menuBoat.boat.x = W * 0.3 + Math.sin(tm * 0.3) * W * 0.12; }
   draw(tm);
+  if (cardView) paintCreature($('cardArt'), cardView.id, tm, false);
   requestAnimationFrame(loop);
 }
 
-resize(); applyLang(); $('bestScore').textContent = best;
+resize(); applyLang(); applyLevel(); $('bestScore').textContent = best;
 requestAnimationFrame(loop);
 
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
