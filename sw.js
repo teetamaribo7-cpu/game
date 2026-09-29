@@ -1,5 +1,5 @@
 // Offline cache: the game works with no internet after the first visit.
-const CACHE = 'tewa-v1';
+const CACHE = 'tewa-v2';
 const FILES = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
@@ -14,7 +14,14 @@ self.addEventListener('activate', e => {
   );
 });
 
+// Cache first; anything fetched successfully (including the web fonts) is kept for offline play.
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request)));
+  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+    if (res.ok || res.type === 'opaque') {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy));
+    }
+    return res;
+  })));
 });
