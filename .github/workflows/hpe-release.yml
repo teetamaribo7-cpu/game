@@ -1,9 +1,12 @@
 # Builds the St Louis HPE Revision app and publishes a GitHub release.
-# Run it by pushing a tag such as hpe-v1.0.0, or from the Actions tab ("Run workflow").
+# It runs when the app changes on the release branch, when a tag such as hpe-v1.0.0 is pushed,
+# or from the Actions tab ("Run workflow"). The version comes from android-app/package.json unless given.
 name: HPE app release
 
 on:
   push:
+    branches: ['claude/cool-hawking-t4c366']
+    paths: ['hpe/**', 'android-app/**', '.github/workflows/hpe-release.yml']
     tags: ['hpe-v*']
   workflow_dispatch:
     inputs:
@@ -24,7 +27,9 @@ jobs:
       - name: Work out version
         id: v
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then V="${GITHUB_REF_NAME#hpe-v}"; else V="${{ inputs.version }}"; fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then V="${{ inputs.version }}"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then V="${GITHUB_REF_NAME#hpe-v}"
+          else V="$(node -p "require('./android-app/package.json').version")"; fi
           echo "version=$V" >> "$GITHUB_OUTPUT"
           echo "tag=hpe-v$V" >> "$GITHUB_OUTPUT"
 
@@ -62,6 +67,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.v.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           name: St Louis HPE Revision ${{ steps.v.outputs.version }}
           files: dist/*
           body: |
