@@ -25,6 +25,8 @@ const TOPICS = [
     ['s', 'Name TWO female reproductive hormones.', '• Oestrogen\n• Progesterone\n(Also accepted: FSH, LH)', 2],
     ['s', 'Name TWO male reproductive hormones.', '• Testosterone\n• FSH (Follicle Stimulating Hormone)\n• LH (Luteinizing Hormone)\nAny two.', 2],
     ['s', 'Describe the role hormones play in growth and development during puberty.', 'Hormones are chemical messengers carried in the blood. At puberty the pituitary gland releases FSH and LH, which tell the ovaries and testes to make sex hormones.\n• Oestrogen and progesterone in girls: breasts grow, hips widen, periods start.\n• Testosterone in boys: voice deepens, facial and body hair grow, muscles develop, sperm production starts.\n• Growth hormone causes the growth spurt in height and weight.', 3],
+    ['m', 'Where is sperm stored while it matures?', ['Epididymis', 'Bladder', 'Uterus', 'Ovary'], 'The epididymis is a coiled tube on the back of each testis.'],
+    ['m', 'About how often is an egg released during a typical menstrual cycle?', ['Once about every 28 days', 'Every day', 'Once a year', 'Every 3 months'], 'Ovulation usually happens about day 14 of a 28-day cycle.'],
   ]},
   { id: 'y10-sexgender', year: 10, strand: 'Strand 1 · Human Growth & Development', title: 'Sex, gender & reproduction', icon: '⚧', qs: [
     ['m', 'What does the term "sex" refer to?', ['Biological characteristics such as genes, hormones and body parts that make someone male, female or intersex', 'The roles society expects men and women to play', 'A person\'s sense of who they are', 'A person\'s attraction to others'], 'Sex is biological. Gender is social and cultural.'],
@@ -37,6 +39,10 @@ const TOPICS = [
     ['t', 'A fertilised egg is called a zygote.', true, 'Sperm + egg = zygote, which divides to become an embryo.'],
     ['s', 'Describe the biological and social aspects of sex and gender.', 'Biological aspects (sex): chromosomes (XX or XY), hormones (oestrogen or testosterone), reproductive organs (ovaries or testes), body features.\nSocial aspects (gender): the roles, behaviours and expectations society gives to males and females. In Kiribati culture, for example, men traditionally fish and cut toddy while women care for the home. These roles are learned and can change.', 3],
     ['s', 'Identify a cultural view about sex and gender in Kiribati.', 'Example: traditionally men are seen as heads of the family and decision makers in the maneaba, while women are expected to care for the home and children. Talking openly about sex is often seen as taboo. (Any reasonable cultural view explained.)', 2],
+    ['m', 'Which is a BIOLOGICAL aspect of sex?', ['Chromosomes (XX or XY)', 'Who cooks the family meal', 'Who speaks in the maneaba', 'Clothing style'], 'Chromosomes, hormones and reproductive organs are biological.'],
+    ['m', 'Female gametes are called:', ['Eggs (ova)', 'Sperm', 'Zygotes', 'Foetuses'], 'The ovum is the female gamete.'],
+    ['m', 'A person\'s sexual interest in and attraction to others is called:', ['Sexual orientation', 'Reproduction', 'Biological sex', 'Fertilisation'], 'This matched option A in the 2024 paper and was not one of the three answers.'],
+    ['m', 'Why can gender roles change over time?', ['Because they are learned from culture and society', 'Because chromosomes change', 'Because hormones stop working', 'They can never change'], 'Gender roles are social, so education and culture change them.'],
   ]},
   { id: 'y10-bodyimage', year: 10, strand: 'Strand 1 · Human Growth & Development', title: 'Body image & heredity', icon: '🪞', qs: [
     ['m', 'Which of the following factors can influence your body image?', ['Heredity', 'Stability', 'Mobility', 'Circulation'], 'Heredity (genes from parents) affects height, skin colour and body shape, which all shape how you see your body.'],
@@ -50,6 +56,8 @@ const TOPICS = [
     ['s', 'Give TWO physical features that are influenced by heredity.', 'Any two of: height, eye colour, skin colour, hair colour/texture, body shape/build, facial features, blood group.', 2],
     ['s', 'List THREE healthy habits a person can have.', 'Any three: eat a balanced diet, exercise regularly, sleep 8–10 hours, drink clean water, keep good hygiene, avoid smoking/alcohol/drugs, manage stress.', 3],
     ['s', 'Describe how heredity influences physical appearance.', 'Heredity is the passing of genes from parents to children. Genes carry instructions for features such as height, eye colour, skin colour, hair type and body shape. That is why children often look like their parents or grandparents. Heredity sets the possible range; diet and exercise (environment) can change things such as weight and fitness.', 3],
+    ['m', 'Which is a sign of a POSITIVE body image?', ['Accepting and caring for your body as it is', 'Hiding your body because of shame', 'Skipping meals to look thin', 'Constantly comparing yourself to celebrities'], 'Positive body image means being comfortable with your body.'],
+    ['m', 'Heredity means:', ['Passing features from parents to children through genes', 'Changing your looks with make-up', 'Growing taller from exercise', 'Getting a suntan'], 'Genes are inherited from both parents.'],
   ]},
   { id: 'y10-body', year: 10, strand: 'Strand 4 · Sport Science', title: 'Human body & sport (bones & muscles)', icon: '🦴', qs: [
     ['m', 'What is human anatomy?', ['The study of the structure of the human body', 'The study of disease', 'The study of food', 'The study of sport rules'], 'Anatomy = structure (what parts). Physiology = function (how they work).'],
@@ -83,6 +91,7 @@ const TOPICS = [
     ['t', 'Co-ordination is the ability to use two or more body parts together smoothly.', true, 'E.g. hand–eye co-ordination when catching or hitting a ball.'],
     ['s', 'Apply THREE components of fitness to a sport of your choice.', 'Example – Soccer:\n• Cardiovascular endurance – to run for 90 minutes.\n• Agility – to dodge defenders.\n• Speed – to sprint to the ball.\n(Any sport with three correct components explained.)', 3],
     ['s', 'List the health-related and skill-related components of fitness.', 'Health-related: cardiovascular endurance, muscular strength, muscular endurance, flexibility, body composition.\nSkill-related: agility, balance, co-ordination, power, reaction time, speed.', 4],
+    ['m', 'Which fitness component does a gymnast doing the splits show most?', ['Flexibility', 'Power', 'Reaction time', 'Cardiovascular endurance'], 'Flexibility = range of movement at a joint.'],
   ]},
   { id: 'y10-sexuality', year: 10, strand: 'Strand 2 · Sexuality & Sexual Behaviours', title: 'Sexuality & sexual behaviour', icon: '❤️', qs: [
     ['m', 'What is the meaning of the word "sexuality"?', ['A central aspect of being human that includes sex, gender, identity, pleasure, intimacy and reproduction', 'Known as a taboo in our culture', 'Only the biological differences of an individual', 'Social roles of females only'], 'Sexuality is much wider than sex: it includes feelings, values, relationships and identity.'],
@@ -95,6 +104,9 @@ const TOPICS = [
     ['s', 'State TWO examples of high-risk sexual behaviours.', 'Any two: unprotected sex (no condom), having multiple partners, early sexual activity, sex under the influence of alcohol/drugs, transactional sex (sex for money or gifts), sharing needles.', 2],
     ['s', 'Identify TWO characteristics of a healthy relationship.', 'Any two: respect, trust, honesty, good communication, equality, support, consent, no violence/control.', 2],
     ['s', 'Describe how informed sexual decision-making is important to health and well-being.', 'When young people know the facts about STIs, HIV, contraception and their rights, they can make safe choices such as delaying sex or using condoms. This protects them from STIs and unplanned pregnancy, lets them stay in school and reach their goals, and protects their emotional well-being by avoiding regret or pressure.', 3],
+    ['m', 'Consent means:', ['Freely agreeing to something, and being able to change your mind at any time', 'Saying nothing', 'Agreeing because you are scared', 'Agreeing while very drunk'], 'Consent must be clear, free and can be withdrawn.'],
+    ['m', 'Which is a RESPONSIBILITY that comes with sexuality?', ['Respecting other people\'s right to say no', 'Pressuring a partner', 'Spreading rumours', 'Ignoring STI risks'], 'Rights come with responsibilities to respect others.'],
+    ['m', 'Which is a healthy way to express affection?', ['Holding hands or hugging with consent', 'Forcing a kiss', 'Sharing private photos', 'Sex under pressure'], 'Affection can be shown safely and respectfully.'],
   ]},
   { id: 'y10-pregnancy', year: 10, strand: 'Strand 2 · Sexuality & Sexual Behaviours', title: 'Pregnancy & parenting', icon: '🤰', qs: [
     ['m', 'Which is one of the FIRST signs of pregnancy?', ['A missed period', 'Hair loss', 'Losing height', 'Fever'], 'Other early signs are tender, enlarged breasts, nausea (morning sickness) and tiredness.'],
@@ -108,6 +120,10 @@ const TOPICS = [
     ['t', 'Parents should support their children by allowing them to go to school and get married at an early age.', false, 'Supporting school is right, but early marriage harms children\'s health and education.'],
     ['s', 'Describe the three stages (trimesters) of foetal development.', '• 1st trimester (weeks 1–12): the zygote becomes an embryo; the heart starts beating and the main organs start to form.\n• 2nd trimester (weeks 13–26): the foetus grows fast, movement can be felt, and the sex can be seen.\n• 3rd trimester (weeks 27–40): the lungs and brain mature, the baby gains weight and turns head down ready for birth.', 3],
     ['s', 'Examine THREE responsibilities of parents.', '• Physical needs – food, clean water, shelter, clothes, health care.\n• Emotional needs – love, care, attention and a safe home free from violence.\n• Education and guidance – sending children to school, teaching values and good behaviour.\n• Protection – keeping children safe from abuse and harm.', 3],
+    ['m', 'The developing baby from week 3 to week 8 is called:', ['An embryo', 'A foetus', 'A gamete', 'A placenta'], 'Zygote → embryo → foetus.'],
+    ['m', 'How many trimesters are there in a pregnancy?', ['Three', 'Two', 'Four', 'Nine'], 'Each trimester is about 3 months.'],
+    ['m', 'The baby\'s heart starts to beat in which trimester?', ['First trimester', 'Second trimester', 'Third trimester', 'After birth'], 'The heart begins beating at about 6 weeks.'],
+    ['m', 'Morning sickness means:', ['Nausea and vomiting during early pregnancy', 'Waking up late', 'A fever after birth', 'A sign of labour'], 'It can happen at any time of the day.'],
   ]},
   { id: 'y10-contra', year: 10, strand: 'Strand 2 · Sexuality & Sexual Behaviours', title: 'Contraception', icon: '🛡️', qs: [
     ['m', 'Which contraceptive method also protects against STIs?', ['Condoms (male and female)', 'Birth control pill', 'Contraceptive injection', 'Implant'], 'Only condoms protect against both pregnancy AND STIs, including HIV.'],
@@ -120,6 +136,9 @@ const TOPICS = [
     ['s', 'Fill in the blanks (2024 exam): "In Kiribati ___1___ are available at public bars, kava bars, motels and resorts, clinics & hospitals and at non-government health organisations like ___2___. The decision for which ___3___ method to use is highly dependent on both partners. It is their own responsibility to ensure they have safe sex and use ___4___ to prevent unplanned pregnancy and STIs."', '1. condoms\n2. KHFA (Kiribati Family Health Association)\n3. contraceptive\n4. contraception', 4],
     ['s', 'Identify TWO strategies to overcome barriers that stop young people getting contraceptives.', 'Any two: youth-friendly clinics with private, non-judging staff; free condoms in private places; sexual health education in schools and churches to reduce shame; peer educators; outreach clinics on outer islands; keeping information confidential.', 2],
     ['s', 'List FOUR places in Kiribati where condoms or contraceptives can be accessed.', 'Any four: hospitals (e.g. Tungaru Central Hospital), health clinics/dispensaries, KFHA, pharmacies, public bars, kava bars, motels and resorts, youth centres.', 4],
+    ['m', 'Emergency contraception is used:', ['After unprotected sex to lower the chance of pregnancy', 'Every day instead of condoms', 'To cure STIs', 'During pregnancy'], 'It works best within 72 hours and does not protect against STIs.'],
+    ['m', 'The contraceptive pill protects against:', ['Pregnancy only', 'Pregnancy and STIs', 'STIs only', 'Nothing'], 'The pill does not stop STIs – use condoms too.'],
+    ['m', 'Contraception means:', ['Methods used to prevent pregnancy', 'Medicine for STIs', 'A type of vaccine', 'Care during pregnancy'], 'Contra = against, conception = becoming pregnant.'],
   ]},
   { id: 'y10-skills', year: 10, strand: 'Strand 5 · Sport Skills, Health & Safety', title: 'Technical skills & tactics', icon: '⚽', qs: [
     ['m', 'What is a technical skill in sport?', ['A specific movement done correctly, like passing, shooting or serving', 'A plan to beat the opponent', 'A rule of the game', 'A type of injury'], 'Technique is HOW you perform a skill correctly.'],
@@ -130,6 +149,9 @@ const TOPICS = [
     ['t', 'Practising skills correctly and often helps them become automatic.', true, 'Repetition builds muscle memory.'],
     ['s', 'Define technical skills and tactics, and give an example of each from one sport.', 'Technical skill: the correct technique for a movement, e.g. the chest pass in netball.\nTactic: a plan to gain an advantage, e.g. a zone defence in netball or basketball.', 2],
     ['s', 'Identify TWO tactical skills in a selected sport.', 'Example – Volleyball: 1) Serving to the weakest receiver. 2) Using a quick set to beat the block.\nExample – Soccer: 1) Counter-attack. 2) Man-to-man marking.', 2],
+    ['m', 'In netball, the pass that is thrown from the chest with two hands is the:', ['Chest pass', 'Bounce pass', 'Overhead pass', 'Shoulder pass'], 'It is fast and accurate over short distances.'],
+    ['m', 'A fast break in basketball is:', ['Quickly attacking before the defence is set', 'A rest period', 'A foul', 'A time-out'], 'It is an attacking tactic.'],
+    ['m', 'Which is a technical skill in soccer?', ['Dribbling', 'Zone defence', 'Counter-attack', 'Offside trap'], 'The others are tactics.'],
   ]},
   { id: 'y10-diet', year: 10, strand: 'Strand 5 · Sport Skills, Health & Safety', title: 'Healthy diet in sport', icon: '🥥', qs: [
     ['m', 'Which nutrient is the body\'s MAIN source of energy for sport?', ['Carbohydrates', 'Proteins', 'Vitamins', 'Minerals'], 'Carbohydrates (rice, breadfruit, taro, bananas) are stored as glycogen in muscles.'],
@@ -140,6 +162,9 @@ const TOPICS = [
     ['t', 'A healthy diet helps athletes recover faster after training.', true, 'Carbohydrate refills energy stores and protein repairs muscles.'],
     ['s', 'Discuss what a healthy diet in sport includes.', 'A balanced diet with:\n• Carbohydrates for energy (rice, breadfruit, taro).\n• Protein for muscle repair (fish, eggs).\n• Some healthy fats (coconut) for long-lasting energy.\n• Vitamins and minerals from fruit and vegetables for body functions.\n• Plenty of water to stay hydrated.\nAthletes should avoid junk food, sugary drinks and alcohol.', 3],
     ['s', 'Explain the importance of being healthy in relation to sport.', 'A healthy athlete has more energy and stamina, recovers faster, gets injured less often and concentrates better. Good nutrition, sleep and hydration improve performance, while illness or poor diet lower strength and endurance.', 3],
+    ['m', 'Which drink is best for most athletes during training?', ['Water', 'Soft drink', 'Alcohol', 'Energy drink with lots of caffeine'], 'Water is the best choice for hydration.'],
+    ['m', 'Fats in the diet mainly provide:', ['Stored, slow-release energy', 'Muscle repair', 'Fast energy for sprints', 'Vitamins only'], 'Fat is useful for long, low-intensity activity.'],
+    ['m', 'What should an athlete eat soon after training to recover?', ['Carbohydrate and protein, e.g. fish with rice', 'Nothing', 'Only lollies', 'Only water forever'], 'Refuel glycogen and repair muscle.'],
   ]},
   { id: 'y10-safety', year: 10, strand: 'Strand 5 · Sport Skills, Health & Safety', title: 'Safety in sport', icon: '⛑️', qs: [
     ['m', 'What is the main purpose of a warm-up?', ['To raise body temperature and prepare muscles to prevent injury', 'To tire players out', 'To replace training', 'To cool down the body'], 'A warm-up increases blood flow and flexibility.'],
@@ -149,6 +174,10 @@ const TOPICS = [
     ['t', 'A cool-down helps the body return to its resting state and reduces muscle stiffness.', true, 'Light jogging and stretching after exercise helps recovery.'],
     ['t', 'Wearing jewellery during contact sports is safe.', false, 'Jewellery can cause cuts and injuries to you and others.'],
     ['s', 'Apply safety gear and precautions to a sport of your choice.', 'Example – Rugby: gear – mouthguard, headgear, proper boots. Precautions – warm-up and cool-down, check the field for hazards, learn correct tackling technique, follow the rules, have a first-aid kit ready.', 3],
+    ['m', 'What should you do first if a player is injured during a game?', ['Stop play and check the player', 'Keep playing', 'Move them roughly', 'Ignore it'], 'Stop, assess and give first aid or get help.'],
+    ['m', 'Which is a piece of safety gear in cricket?', ['Helmet and pads for the batter', 'Swimming goggles', 'Boxing gloves', 'Netball bib'], 'Cricket balls are hard and fast.'],
+    ['m', 'Why is it important to follow the rules of a game?', ['To keep players safe and the game fair', 'To make the game slower', 'To help one team', 'Rules do not matter'], 'Many rules exist to prevent injuries.'],
+    ['m', 'Why should athletes drink water in hot Kiribati weather?', ['To prevent dehydration and heat illness', 'To gain muscle', 'To make them slower', 'It is not needed'], 'Heat and humidity increase sweating.'],
   ]},
   { id: 'y10-food', year: 10, strand: 'Strand 3 · Health & Safety', title: 'Food choices & nutrition', icon: '🍲', qs: [
     ['m', 'Which statement best summarises the key components of nutrition?', ['Fats, proteins, carbohydrates and water are essential for energy and nutrients that must be replenished daily', 'Nutrition consists only of vitamins', 'Nutrition is unimportant as long as we eat enough', 'Nutrition depends only on taste'], 'All nutrients are needed every day in the right amounts.'],
@@ -160,6 +189,9 @@ const TOPICS = [
     ['t', 'Under-nutrition only happens in people who are thin.', false, 'People can be overweight and still lack vitamins and minerals.'],
     ['s', 'Describe how food choices affect your own and others\' health.', 'Healthy choices (local fish, fruit, vegetables, water) give energy, help growth and prevent NCDs. Unhealthy choices (processed, sugary, salty or fatty foods) cause obesity, diabetes, high blood pressure and tooth decay. Family food choices affect children, and buying local foods supports the community.', 3],
     ['s', 'Suggest THREE ways to improve the nutritional value of meals.', 'Any three: add vegetables or fruit (pawpaw, pumpkin, cabbage) to each meal; choose fish instead of fatty tinned meat; boil or bake instead of frying; use less salt and sugar; drink water instead of soft drinks; eat brown rice or local starch such as breadfruit.', 3],
+    ['m', 'Which is an ENERGY-giving food?', ['Breadfruit', 'Fish', 'Pawpaw', 'Water'], 'Starchy foods like breadfruit, rice and taro give energy.'],
+    ['m', 'Which is a PROTECTIVE food rich in vitamins?', ['Pumpkin and green leaves', 'Rice', 'Butter', 'Sugar'], 'Fruit and vegetables protect against illness.'],
+    ['m', 'Eating too much salt increases the risk of:', ['High blood pressure', 'Anaemia', 'Scurvy', 'Ringworm'], 'High blood pressure leads to stroke and heart disease.'],
   ]},
   { id: 'y10-drugs', year: 10, strand: 'Strand 3 · Health & Safety', title: 'Alcohol & other drugs', icon: '🚭', qs: [
     ['m', 'Which statement accurately describes the four categories of drugs?', ['Hallucinogens, narcotics, stimulants and depressants can all be addictive and cause withdrawal when stopped', 'Narcotics are the only drugs that affect the mind', 'Only hallucinogens cause withdrawal', 'Stimulants and depressants are not addictive'], 'All four categories can cause dependence and withdrawal.'],
@@ -172,6 +204,8 @@ const TOPICS = [
     ['t', 'Second-hand smoke cannot harm non-smokers.', false, 'Second-hand smoke causes asthma, lung disease and cancer in others.'],
     ['s', 'Describe the short-term and long-term effects of alcohol on health.', 'Short-term: slow reactions, poor judgement, loss of balance, vomiting, violence, accidents, unsafe sex.\nLong-term: liver damage (cirrhosis), heart disease, high blood pressure, brain damage, addiction, depression, family and money problems.', 4],
     ['s', 'Describe the effects of tobacco on physical and mental health.', 'Physical: lung cancer, heart disease, stroke, coughing, reduced fitness, stained teeth.\nMental: nicotine addiction, anxiety and irritability during withdrawal, stress.', 3],
+    ['m', 'Kava (sakau) mainly acts on the body as a:', ['Depressant (relaxes and slows the body)', 'Stimulant', 'Vitamin', 'Painkiller only'], 'Heavy use can cause skin problems, tiredness and poor judgement.'],
+    ['m', 'Addiction means:', ['A strong need to keep using a drug even when it causes harm', 'Using medicine correctly', 'Trying something once', 'Eating healthy food'], 'Stopping may cause withdrawal symptoms.'],
   ]},
   { id: 'y10-hygiene', year: 10, strand: 'Strand 3 · Health & Safety', title: 'Health, hygiene & microorganisms', icon: '🦠', qs: [
     ['m', 'Which of the following is NOT a type of microorganism?', ['Lice', 'Fungi', 'Viruses', 'Bacteria'], 'Lice are small insects you can see; microorganisms need a microscope.'],
@@ -183,6 +217,9 @@ const TOPICS = [
     ['t', 'Antibiotics can cure viral infections such as the common cold.', false, 'Antibiotics kill bacteria, not viruses.'],
     ['s', 'Identify the THREE main types of microorganisms and give an example of a disease each causes.', '• Bacteria – tuberculosis, cholera, typhoid.\n• Viruses – influenza, COVID-19, HIV, dengue.\n• Fungi – ringworm, athlete\'s foot.\n(Protozoa – malaria, amoebic dysentery – also accepted.)', 3],
     ['s', 'List FOUR personal hygiene practices.', 'Any four: wash hands with soap, bathe daily, brush teeth twice a day, wash clothes, cut nails, cover coughs and sneezes, use a clean toilet, boil drinking water, cover food.', 4],
+    ['m', 'Which disease is spread by mosquitoes?', ['Dengue fever', 'Ringworm', 'Tuberculosis', 'Diabetes'], 'Remove standing water to stop mosquitoes breeding.'],
+    ['m', 'Why should drinking water be boiled?', ['To kill germs that cause diarrhoea', 'To make it taste sweet', 'To add vitamins', 'It is not necessary'], 'Boiling kills bacteria, viruses and parasites.'],
+    ['m', 'Which microorganism is used to make bread rise?', ['Yeast (a fungus)', 'Virus', 'Tuberculosis bacteria', 'Lice'], 'Yeast is a useful fungus.'],
   ]},
   { id: 'y10-admin', year: 10, strand: 'Strand 6 · Sport Administration', title: 'Sport administration & programs', icon: '📋', qs: [
     ['m', 'What is sports administration?', ['The planning, organising and managing of sport and sporting events', 'Playing sport professionally', 'Treating sports injuries', 'Writing sports news'], 'Administrators run clubs, competitions and federations.'],
@@ -195,6 +232,8 @@ const TOPICS = [
     ['s', 'Describe the role of a sports administrator, coach, referee and volunteer.', '• Administrator – plans and manages the club or event: budgets, schedules, venues, registration.\n• Coach – trains players, plans sessions, picks the team and tactics.\n• Referee/umpire – enforces the rules, keeps the game fair and safe.\n• Volunteer – helps with tasks such as scoring, first aid, food, setting up.', 4],
     ['s', 'Describe the benefits of sport to the community.', 'Sport improves health and fitness, reduces NCDs, builds teamwork and friendships, keeps youth away from drugs and alcohol, brings pride and unity (e.g. inter-island games), and creates jobs and income through events.', 3],
     ['s', 'Describe how to organise a sports program.', '1. Plan – set goals, choose the sport, date, venue, budget.\n2. Organise – form a committee, get equipment, officials, sponsors, first aid.\n3. Promote – advertise and register teams.\n4. Run the event – draw, schedule, officiating, safety.\n5. Evaluate – review results and feedback afterwards.', 4],
+    ['m', 'Which is a type of sports program?', ['An inter-school athletics competition', 'A hospital', 'A shop', 'A church service'], 'Programs include school sports, club leagues and national games.'],
+    ['m', 'Who helps at sports events without being paid?', ['Volunteers', 'Agents', 'Professional players', 'Sponsors'], 'Volunteers are vital to community sport.'],
   ]},
 
   // ───────────────────────── YEAR 11 ─────────────────────────
@@ -216,6 +255,8 @@ const TOPICS = [
     ['s', 'Explain how regular prenatal care supports the health of both the mother and the unborn child.', 'Regular check-ups find problems early (high blood pressure, anaemia, infections, wrong baby position) so they can be treated. The mother gets iron and folic acid, vaccinations and advice on diet, rest and avoiding alcohol and smoking. This lowers the risk of complications, premature birth and low birth weight, so both mother and baby are healthier and birth is safer.', 3],
     ['s', 'Define "spacing pregnancy" and give one example.', 'Definition: leaving a planned gap between one birth and the next pregnancy (at least 2 years) so the mother recovers.\nExample: a couple uses the contraceptive injection or condoms after their first child and waits until the child is 2–3 years old before having another.', 2],
     ['s', 'Define prenatal care and state ONE benefit and ONE risk.', 'Definition: health care given to a pregnant woman before birth.\nBenefit: problems like anaemia or high blood pressure are found and treated early.\nRisk: travel costs or time (e.g. from outer islands); rarely, side effects of medicines or tests. (Accept a reasonable risk.)', 3],
+    ['m', 'Which vitamin or mineral helps prevent anaemia in pregnancy?', ['Iron', 'Vitamin C only', 'Calcium only', 'Sodium'], 'Iron is needed to make red blood cells.'],
+    ['m', 'A baby born before 37 weeks is called:', ['Premature (preterm)', 'Overdue', 'Full term', 'A foetus'], 'Premature babies may have breathing and feeding problems.'],
   ]},
   { id: 'y11-support', year: 11, strand: 'Strand 1 · Human Growth & Development', title: 'Supporting a healthy pregnancy', icon: '👨‍👩‍👧', qs: [
     ['m', 'How can a partner best support a healthy pregnancy?', ['Provide emotional support and attend antenatal visits', 'Ignore health advice', 'Encourage alcohol use to relax', 'Leave all decisions to the mother'], 'A healthy pregnancy is not only the mother\'s responsibility.'],
@@ -226,6 +267,11 @@ const TOPICS = [
     ['s', 'Discuss FOUR ways a father can support a pregnant partner.', '1. Go with her to antenatal visits.\n2. Give emotional support – listen, be patient, reduce stress.\n3. Help with household chores so she can rest.\n4. Make sure she eats healthy food, and do not smoke or drink around her.\n5. Save money and plan for the birth and transport to the hospital.', 4],
     ['s', 'Explain the role of the father, family and community in supporting a healthy pregnancy.', 'Father: gives emotional and financial support, attends antenatal visits, avoids smoking/alcohol near her, shares chores.\nFamily: provides nutritious food, helps with heavy work, encourages clinic visits, respects her need to rest.\nCommunity: provides accessible health services and transport, health education, and does not stigmatise young mothers. Together they reduce stress and risks for mother and baby.', 3],
     ['s', 'Develop a simple plan for supporting a healthy pregnancy.', 'Example plan:\n• Month 1–3: confirm the pregnancy at the clinic; start folic acid and iron; stop alcohol and smoking.\n• Every month: attend an antenatal check-up with the partner.\n• Daily: eat fish, green leaves and fruit; drink clean water; rest; walk gently.\n• Family: share chores; save money for the birth.\n• Final month: arrange transport and hospital bag; learn the danger signs.', 4],
+    ['m', 'Which is a way the father can support a pregnant partner?', ['Going with her to antenatal clinic visits', 'Smoking in the house', 'Leaving her to do all the heavy work', 'Spending money on alcohol'], 'Fathers share the responsibility.'],
+    ['m', 'Why should a pregnant woman avoid lifting very heavy loads?', ['It can strain her body and harm the pregnancy', 'It makes the baby grow faster', 'It is good exercise', 'It has no effect'], 'Family members can help with heavy work.'],
+    ['m', 'Which is a DANGER SIGN in pregnancy that needs a nurse straight away?', ['Heavy bleeding or severe headache', 'Feeling the baby move', 'Mild tiredness', 'Wanting to eat more'], 'Bleeding, severe headache, swelling and fever are danger signs.'],
+    ['m', 'A birth plan helps a family to:', ['Prepare transport, money and a place for a safe delivery', 'Choose the baby\'s school', 'Avoid the clinic', 'Delay the birth'], 'Planning reduces risks on the day.'],
+    ['m', 'How can the church or community support young pregnant mothers?', ['By giving care and support without judging them', 'By shaming them', 'By telling them to leave school', 'By keeping them from clinics'], 'Support helps both mother and baby stay healthy.'],
   ]},
   { id: 'y11-bodyimage', year: 11, strand: 'Strand 1 · Human Growth & Development', title: 'Body image & beauty standards', icon: '💄', qs: [
     ['m', 'Which statement about attractiveness is TRUE?', ['What people find attractive differs between cultures and changes with age', 'Everyone in the world has the same idea of beauty', 'Beauty standards never change', 'Only thin bodies are attractive'], 'In the past, a larger body was a sign of wealth and beauty in many Pacific cultures.'],
@@ -234,6 +280,11 @@ const TOPICS = [
     ['t', 'Beauty standards for men can also cause pressure, such as wanting big muscles.', true, 'Some young men misuse steroids or supplements.'],
     ['s', 'Critically assess how gendered standards of beauty can drive people to change their appearance.', 'The media, advertisers and social media show women as thin with light skin and men as tall and muscular. These standards are narrow and often edited. People who do not match them may feel ashamed and try to change their bodies through crash diets, skin-lightening creams, steroids or surgery, which can damage health and mental well-being. The standards are made by culture and business, not by health, so we should question them and value diverse bodies.', 4],
     ['s', 'Discuss how what people find attractive differs with age and culture.', 'Culture: in traditional Kiribati and Pacific cultures, a larger body showed health and status, while Western media prefer thin bodies. Some cultures value tattoos, long hair or darker skin.\nAge: young people may focus on looks and fashion, while older people may value kindness, health and maturity. Ideas of beauty also change over time.', 3],
+    ['m', 'Why do many photos in advertisements look "perfect"?', ['They are often edited and use lighting and make-up', 'Everyone looks like that', 'They are always natural', 'Cameras cannot change images'], 'Being media-literate protects body image.'],
+    ['m', 'Which is a harmful practice caused by pressure to look a certain way?', ['Using skin-lightening creams', 'Eating balanced meals', 'Playing sport', 'Getting enough sleep'], 'Some creams contain harmful chemicals such as mercury.'],
+    ['m', 'Which is a positive message about body image?', ['Healthy bodies come in many shapes and sizes', 'Only thin people are healthy', 'Muscles make you a better person', 'Your worth depends on your looks'], 'Health is more than appearance.'],
+    ['m', 'Standards of beauty are shaped mainly by:', ['Culture, media and time period', 'Chromosomes only', 'Blood type', 'Nothing – they are fixed'], 'That is why they differ between places and change over time.'],
+    ['m', 'Which could be a result of a very negative body image?', ['Eating disorders and low self-esteem', 'Better sleep', 'More confidence', 'Improved fitness'], 'Poor body image harms mental health.'],
   ]},
   { id: 'y11-cardio', year: 11, strand: 'Strand 4 · Sport Science', title: 'Heart, blood & lungs', icon: '🫀', qs: [
     ['m', 'Which organ pumps blood around the body during exercise?', ['Heart', 'Lung', 'Liver', 'Kidney'], 'The heart is a muscular pump with four chambers.'],
@@ -315,6 +366,10 @@ const TOPICS = [
     ['s', 'What are the differences between sexual feelings, fantasies and desires?', 'Feelings – emotions and body sensations when attracted to someone (e.g. excitement, butterflies).\nFantasies – imagined thoughts or daydreams about romantic or sexual situations; they stay in the mind.\nDesires – a wish or urge to actually do something with someone (e.g. wanting to kiss them).', 3],
     ['s', 'Discuss FOUR ways to manage sexual feelings, desires and fantasies.', '1. Accept they are natural – do not feel ashamed.\n2. Redirect energy into sport, music, study or hobbies.\n3. Talk to a trusted adult, counsellor or friend.\n4. Set personal limits and avoid risky situations (being alone, alcohol).\n5. Remember your goals and values before acting.', 4],
     ['s', 'Explain why not all people choose to act on their sexual feelings.', 'People may choose not to act because of religious or family values, wanting to wait for marriage or the right partner, focusing on school and career goals, not feeling ready emotionally, avoiding the risk of STIs or pregnancy, or respecting the other person\'s wishes. Having a feeling does not mean you must act on it.', 3],
+    ['m', 'Why might a person choose NOT to act on sexual feelings?', ['Because of their values, goals or not feeling ready', 'Because feelings are wrong', 'Because it is illegal to have feelings', 'Because feelings are an illness'], 'Having a feeling does not mean you must act on it.'],
+    ['m', 'Sexuality is:', ['A natural part of being human that can support well-being', 'Something shameful', 'Only about reproduction', 'Only for adults'], 'Sexuality includes feelings, identity and relationships.'],
+    ['m', 'Which is a helpful way to cope with strong feelings of attraction?', ['Talk to a trusted adult or friend', 'Keep it secret and feel ashamed', 'Pressure the other person', 'Drink alcohol'], 'Talking helps you understand your feelings.'],
+    ['m', 'Feeling nervous and excited around someone you like is:', ['A normal feeling of attraction', 'A sign of illness', 'Always dangerous', 'Something only adults feel'], 'These feelings are part of growing up.'],
   ]},
   { id: 'y11-fitness', year: 11, strand: 'Strand 4 · Sport Science', title: 'Physical fitness & BMI', icon: '⚖️', qs: [
     ['m', 'What is the formula for Body Mass Index (BMI)?', ['Weight (kg) ÷ height (m)²', 'Height ÷ weight', 'Weight × height', 'Weight (kg) ÷ age'], 'BMI = mass in kg ÷ (height in metres × height in metres).'],
@@ -327,6 +382,8 @@ const TOPICS = [
     ['s', 'Calculate the BMI of a student who weighs 60 kg and is 1.6 m tall, and state the category.', 'BMI = 60 ÷ (1.6 × 1.6) = 60 ÷ 2.56 ≈ 23.4 kg/m².\nCategory: healthy (normal) weight, 18.5–24.9.', 2],
     ['s', 'State the BMI formula and its unit.', 'BMI = weight (kg) ÷ height (m)²\nUnit: kg/m²', 2],
     ['s', 'Apply body composition to sports preparation.', 'Athletes check BMI and body fat to plan training and diet. A long-distance runner benefits from low body fat to carry less weight; a rugby forward needs more muscle mass. If BMI is too high, the athlete adds aerobic training and reduces sugary and fatty foods; if too low, they increase healthy energy and protein. Tracking body composition shows if training is working.', 3],
+    ['m', 'A BMI of 27 is classified as:', ['Overweight', 'Healthy', 'Underweight', 'Obese'], 'Overweight = 25 to 29.9.'],
+    ['m', 'A BMI below 18.5 is classified as:', ['Underweight', 'Healthy', 'Overweight', 'Obese'], 'Underweight can mean poor nutrition.'],
   ]},
   { id: 'y11-selfdef', year: 11, strand: 'Strand 5 · Sport Skills & Safety', title: 'Self-defence sports', icon: '🥋', qs: [
     ['m', 'Which of these is a self-defence (combat) sport?', ['Taekwondo', 'Volleyball', 'Netball', 'Swimming'], 'Others: judo, boxing, wrestling, karate, traditional Kiribati martial arts.'],
@@ -336,6 +393,9 @@ const TOPICS = [
     ['m', 'In boxing, a straight punch with the lead hand is a:', ['Jab', 'Hook', 'Uppercut', 'Kick'], 'The jab is the most-used punch.'],
     ['t', 'Respect for your opponent and the referee is part of all martial arts.', true, 'Bowing is a sign of respect in taekwondo and judo.'],
     ['s', 'Discuss the sports skills used in ONE self-defence sport.', 'Example – Boxing: stance and footwork (balance and movement), guard (hands up to protect the face), jab, cross, hook and uppercut, blocking and slipping punches, and fitness (speed, power, endurance). Safety: gloves, mouthguard, headgear, a referee.', 3],
+    ['m', 'Which safety gear is worn in taekwondo sparring?', ['Head guard, chest protector and mouthguard', 'Shin pads only', 'Swimming cap', 'Nothing'], 'Protective gear reduces injury.'],
+    ['m', 'Wrestling mainly uses:', ['Grappling, takedowns and holds', 'Kicks and punches only', 'A bat', 'A ball'], 'Wrestlers try to pin or control the opponent.'],
+    ['m', 'Why is a good stance important in self-defence sports?', ['It gives balance and lets you move quickly', 'It looks nice', 'It makes you slower', 'It is not important'], 'Balance is the base of every technique.'],
   ]},
   { id: 'y11-injury', year: 11, strand: 'Strand 5 · Sport Skills & Safety', title: 'Treatment & rehabilitation (PRICE)', icon: '🩹', qs: [
     ['m', 'What does PRICE stand for?', ['Protection, Rest, Ice, Compression, Elevation', 'Pain, Rest, Ice, Cream, Exercise', 'Protection, Run, Ice, Cool, Exercise', 'Pressure, Rest, Injection, Cast, Elevation'], 'PRICE is used for soft-tissue injuries like sprains and strains.'],
@@ -347,6 +407,8 @@ const TOPICS = [
     ['t', 'Heat should be applied immediately to a new swelling injury.', false, 'Use ice first to reduce swelling; heat can increase it.'],
     ['s', 'Discuss the 5 most common sport injury treatments (PRICE).', '• Protection – stop playing and protect the injury from further harm (e.g. splint, crutches).\n• Rest – avoid using the injured part for 24–72 hours.\n• Ice – apply ice wrapped in a cloth for 15–20 minutes to reduce pain and swelling.\n• Compression – wrap firmly with an elastic bandage to limit swelling.\n• Elevation – raise the injured part above the heart to reduce swelling.', 5],
     ['s', 'Apply PRICE to a volleyball player who twists their ankle.', 'P – stop play and help them off the court without putting weight on the foot.\nR – rest the ankle.\nI – put ice wrapped in a towel on it for 15–20 minutes.\nC – wrap the ankle with an elastic bandage.\nE – lie them down with the ankle raised on a bag or chair.\nSee a nurse or doctor if it is very painful or they cannot walk.', 4],
+    ['m', 'For how long should ice be applied at one time?', ['About 15–20 minutes', '2 hours', '1 minute', 'All day'], 'Longer can damage the skin; always wrap ice in a cloth.'],
+    ['m', 'A strain is an injury to a:', ['Muscle or tendon', 'Ligament', 'Bone', 'Tooth'], 'A sprain affects a ligament.'],
   ]},
   { id: 'y11-disease', year: 11, strand: 'Strand 3 · Health & Wellbeing', title: 'Disease prevention (NCDs, STIs)', icon: '🩺', qs: [
     ['m', 'Which is the most effective way to help prevent NCDs such as heart disease and diabetes?', ['Regular physical activity and a balanced diet', 'Smoking occasionally', 'Avoiding vaccinations', 'Ignoring stress and skipping meals'], 'Lifestyle is the key to preventing NCDs.'],
@@ -366,6 +428,9 @@ const TOPICS = [
     ['s', 'Explain how TWO preventive factors can reduce the risk of NCDs.', '1. Regular physical activity (at least 60 minutes a day for youth) burns energy, keeps weight healthy, strengthens the heart and lowers blood sugar and blood pressure – reducing diabetes and heart disease.\n2. A healthy diet (local fish, vegetables, fruit, less sugar, salt and fat) prevents obesity, high cholesterol and high blood pressure.\n(Also: not smoking, limiting alcohol, regular check-ups.)', 4],
     ['s', 'Explain the impact of STIs on young people\'s health and well-being.', 'Physical: pain, infections, infertility (e.g. untreated chlamydia/gonorrhoea), higher risk of HIV, some cause cancer (HPV), can pass to babies.\nMental/emotional: shame, anxiety, stress, depression, stigma.\nSocial: relationship breakdown, missing school, costs of treatment. Many have no symptoms, so they spread without people knowing.', 3],
     ['s', 'Plan preventive health practices to protect against communicable and non-communicable diseases.', 'Example weekly plan:\n• Communicable: wash hands before eating and after the toilet; drink boiled water; get vaccinated; use condoms or abstain; sleep under a mosquito net.\n• NCDs: exercise 60 minutes a day (sport, walking); eat local fish and vegetables, drink water not soft drinks; do not smoke or drink alcohol; get a check-up once a year.', 4],
+    ['m', 'Which is a NON-communicable disease?', ['Type 2 diabetes', 'Influenza', 'Tuberculosis', 'Dengue'], 'NCDs are not spread by germs.'],
+    ['m', 'Which is the BEST way to prevent many communicable diseases in children?', ['Vaccination (immunisation)', 'Eating sugar', 'Staying indoors all day', 'Avoiding water'], 'Vaccines train the immune system.'],
+    ['m', 'Which of these increases the risk of NCDs?', ['Smoking', 'Eating vegetables', 'Walking daily', 'Drinking water'], 'Tobacco is a major NCD risk factor.'],
   ]},
   { id: 'y11-promo', year: 11, strand: 'Strand 3 · Health & Wellbeing', title: 'Health promotion', icon: '📣', qs: [
     ['m', 'What is health promotion?', ['Helping people increase control over and improve their health', 'Selling medicine', 'Treating people in hospital only', 'Advertising junk food'], 'Examples: campaigns, school programs, community activities.'],
@@ -375,6 +440,11 @@ const TOPICS = [
     ['s', 'Discuss ONE health issue affecting young people today.', 'Example – alcohol misuse: many youths drink at parties or kava bars, which leads to fights, accidents, unsafe sex, dropping out of school and addiction. Causes include peer pressure, boredom and easy access.\n(Other valid issues: teenage pregnancy, STIs, obesity/NCDs, smoking, depression/suicide, bullying.)', 3],
     ['s', 'Explain how schools can help address a youth health issue.', 'Schools can teach health education (facts and refusal skills), run awareness days and campaigns, offer counselling, provide sports and clubs so students have healthy activities, make school alcohol- and smoke-free, train peer educators, involve parents and invite health workers from the clinic or KFHA.', 3],
     ['s', 'Propose strategies to address a priority health issue affecting young people.', 'Issue: obesity/NCDs. Strategies: 1) Sell healthy local food and water at the canteen; 2) daily physical activity and inter-class sport; 3) nutrition lessons and cooking demonstrations; 4) a community walk/fun run with families; 5) BMI checks with the school nurse.', 4],
+    ['m', 'Which is an example of health promotion in a community?', ['A radio campaign encouraging people to drink water instead of soft drinks', 'Selling more cigarettes', 'Closing the clinic', 'Stopping school sport'], 'Health promotion spreads healthy messages and actions.'],
+    ['m', 'The first step in planning a health promotion activity is to:', ['Identify the health issue and who it affects', 'Buy prizes', 'Blame the people affected', 'Skip planning'], 'Research the issue first, then plan strategies.'],
+    ['m', 'Why is it good to involve young people in planning youth health activities?', ['They understand what will work for their peers', 'Adults are never needed', 'It costs more', 'It is not helpful'], 'Youth participation makes programs more effective.'],
+    ['m', 'Which is a strategy to reduce teenage alcohol use?', ['Offering sports and youth activities as alternatives', 'Selling alcohol to teenagers', 'Ignoring the issue', 'Advertising alcohol at school'], 'Healthy alternatives reduce risky behaviour.'],
+    ['m', 'Which organisation in Kiribati promotes sexual and reproductive health?', ['KFHA (Kiribati Family Health Association)', 'A fishing club', 'A shipping company', 'The airport'], 'KFHA gives education, testing and contraception.'],
   ]},
   { id: 'y11-mental', year: 11, strand: 'Strand 3 · Health & Wellbeing', title: 'Mental health', icon: '🧠', qs: [
     ['m', 'Which of the following best describes mental illness?', ['A general term for a group of illnesses that can affect mood, thinking and behaviour', 'It only affects physical health', 'It only occurs in adults', 'It always goes away on its own without treatment'], 'Mental illness can affect anyone at any age, and help is available.'],
@@ -401,6 +471,10 @@ const TOPICS = [
     ['s', 'Apply the skills needed to coach a sports program.', 'Plan sessions with clear goals (warm-up, skill drills, game play, cool-down); demonstrate and explain skills clearly; give positive, specific feedback; motivate and include every player; keep players safe (first aid, checking equipment); know the rules and tactics; be a good role model.', 4],
     ['s', 'Apply the skills needed to officiate a chosen sport.', 'Example – Volleyball referee: know the rules (rotation, net faults, double touch); use correct whistle and hand signals; position well to see play; make fair, confident and consistent decisions; communicate with the scorer and line judges; keep calm and control players\' behaviour; check safety of the court and net.', 4],
     ['s', 'Apply the role of an administrator, agent, coach, referee and volunteer to a given sport.', 'Example – Kiribati inter-island soccer tournament:\n• Administrator – organises the fixture, venue, budget and registration.\n• Agent – negotiates for a top player to join an overseas club.\n• Coach – trains the island team and picks tactics.\n• Referee – controls matches fairly.\n• Volunteers – run the scoreboard, first aid, water and food.', 5],
+    ['m', 'What does a yellow card mean in soccer?', ['A caution (warning)', 'A goal', 'The player is sent off', 'Half time'], 'Two yellows = red.'],
+    ['m', 'A good coach gives feedback that is:', ['Positive, specific and helpful', 'Only shouting', 'Only about mistakes', 'Never given'], 'Specific feedback helps players improve.'],
+    ['m', 'Which is the correct order for a training session?', ['Warm-up, skills, game, cool-down', 'Game, warm-up, cool-down, skills', 'Cool-down, game, skills, warm-up', 'Skills only'], 'A warm-up prepares the body and a cool-down helps recovery.'],
+    ['m', 'Why must a referee be neutral?', ['So that decisions are fair to both teams', 'So one team wins', 'So the game is faster', 'It does not matter'], 'Fairness is the key quality of an official.'],
   ]},
 ];
 

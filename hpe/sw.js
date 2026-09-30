@@ -1,6 +1,6 @@
 // Offline cache: the revision app works with no internet after the first visit.
-const CACHE = 'stlouis-hpe-v1';
-const FILES = ['./', './index.html', './questions.js', './manifest.json', './crest.png'];
+const CACHE = 'stlouis-hpe-v2';
+const FILES = ['./', './index.html', './questions.js', './notes.js', './manifest.json', './crest.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

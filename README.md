@@ -69,9 +69,11 @@ The Kiribati text is a best effort and only partly translated. Please send corre
 
 ## HPE Revision app (`hpe/`)
 A separate revision app for St Louis High School students in KCSE **Health and Physical Education, Years 10 and 11**. Open `hpe/index.html`.
-- 459 questions covering all 30 Year 10 and Year 11 syllabus topics, plus the full **KCSE 2024 and 2025 papers** with model answers.
-- Practice quiz with instant feedback, a timed test/exam mode, quick quizzes, True/False and multiple-choice drills, and flashcards.
-- For written answers, students tap *Show solution* and mark themselves Got it, Partly or Missed.
-- **My Mistakes** saves every wrong answer for revision. **My Progress** shows the best score for each topic. There is also a searchable **Solutions** library.
-- Works offline and can be installed to the home screen. Progress is saved on the device.
-- Questions live in `hpe/questions.js`, so teachers can add new ones there. The file explains the format.
+- **Notes** for all 30 Year 10 and Year 11 syllabus topics, with exam-style questions and model answers.
+- **Multiple-choice quizzes**: 250 questions. There are topic quizzes, timed tests, a Quick Quiz, a 40-question Mock Exam, Year 10 and Year 11 mixed quizzes, and My Mistakes.
+- **Past papers**: the full KCSE 2024 and 2025 papers with solutions. Students can show the answers one question at a time or all together.
+- A search box covers the notes, questions and answers. My Progress shows the best score for each topic.
+- **Offline**:
+  - When hosted, it installs to the home screen and then works without internet (it uses a service worker).
+  - `hpe/st-louis-hpe-offline.html` is a single file with everything built in. Share it by WhatsApp or Bluetooth and open it in Chrome.
+- Questions are in `hpe/questions.js` and notes are in `hpe/notes.js`. After editing either, run `python3 hpe/build.py` to rebuild the offline file.
