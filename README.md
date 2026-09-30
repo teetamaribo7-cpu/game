@@ -1,4 +1,24 @@
-# Te Wa – Kiribati Canoe Fishing
+# St Louis HPE Revision
+A revision app for St Louis High School students in KCSE **Health and Physical Education, Years 10 and 11**. Open `hpe/index.html`.
+- **Notes** for all 30 Year 10 and Year 11 syllabus topics, with exam-style questions and model answers.
+- **Multiple-choice quizzes**: 250 questions. There are topic quizzes, timed tests, a Quick Quiz, a 40-question Mock Exam, Year 10 and Year 11 mixed quizzes, and My Mistakes.
+- **Past papers**: the full KCSE 2024 and 2025 papers with solutions. Students can show the answers one question at a time or all together.
+- A search box covers the notes, questions and answers. My Progress shows the best score for each topic.
+- **Offline**:
+  - When hosted, it installs to the home screen and then works without internet (it uses a service worker).
+  - `hpe/st-louis-hpe-offline.html` is a single file with everything built in. Share it by WhatsApp or Bluetooth and open it in Chrome.
+- Questions are in `hpe/questions.js` and notes are in `hpe/notes.js`. After editing either, run `python3 hpe/build.py` to rebuild the offline file.
+
+## Download and install
+- **Android:** get the APK from the [latest release](https://github.com/teetamaribo7-cpu/game/releases/latest).
+- **Any phone or computer:** download `st-louis-hpe-offline.html` from the release and open it in Chrome.
+- **iPhone:** open the website version in Safari and tap Share → Add to Home Screen.
+
+The website's main address opens this app. The `android-app/` folder builds the APK. `.github/workflows/hpe-release.yml` publishes a new release when the app changes. To make a new version, raise `version` in `android-app/package.json`.
+
+---
+
+## Also in this repository: Te Wa (fishing game, in `te-wa/`)
 
 A fishing game set in Kiribati for 1 to 4 players. Paddle your outrigger canoe (*te wa*) across the lagoon, drop your line
 and bring home the best catch before sunset.
@@ -66,14 +86,3 @@ python3 -m http.server 8000   # then open http://localhost:8000
 
 ## Help wanted
 The Kiribati text is a best effort and only partly translated. Please send corrections from native speakers. Ko rabwa!
-
-## HPE Revision app (`hpe/`)
-A separate revision app for St Louis High School students in KCSE **Health and Physical Education, Years 10 and 11**. Open `hpe/index.html`.
-- **Notes** for all 30 Year 10 and Year 11 syllabus topics, with exam-style questions and model answers.
-- **Multiple-choice quizzes**: 250 questions. There are topic quizzes, timed tests, a Quick Quiz, a 40-question Mock Exam, Year 10 and Year 11 mixed quizzes, and My Mistakes.
-- **Past papers**: the full KCSE 2024 and 2025 papers with solutions. Students can show the answers one question at a time or all together.
-- A search box covers the notes, questions and answers. My Progress shows the best score for each topic.
-- **Offline**:
-  - When hosted, it installs to the home screen and then works without internet (it uses a service worker).
-  - `hpe/st-louis-hpe-offline.html` is a single file with everything built in. Share it by WhatsApp or Bluetooth and open it in Chrome.
-- Questions are in `hpe/questions.js` and notes are in `hpe/notes.js`. After editing either, run `python3 hpe/build.py` to rebuild the offline file.
