@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HPE Revision</title>
+<meta name="description" content="St Louis High School – KCSE Health and Physical Education quizzes and solutions for Year 10 and 11. Works offline.">
+<meta name="theme-color" content="#16307a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="crest.png">
+<link rel="apple-touch-icon" href="crest.png">
+<style>
+:root {
+  --bg: #eef2fb; --card: #ffffff; --ink: #14203d; --muted: #5b6785; --line: #d9e0ef;
+  --navy: #16307a; --navy-2: #2447a8; --gold: #f2c230; --gold-ink: #3b2c00;
+  --ok: #178a4c; --ok-bg: #e2f6ea; --bad: #c0392b; --bad-bg: #fbe6e3; --warn: #b7791f; --warn-bg: #fdf1dc;
+  --shadow: 0 2px 10px rgba(20, 32, 61, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1426; --card: #172241; --ink: #e8edf9; --muted: #9aa7c7; --line: #2a3760;
+    --navy: #3b5fd0; --navy-2: #5a7ce6; --ok: #4fd08a; --ok-bg: #123524; --bad: #ff7b6b; --bad-bg: #3d1a17;
+    --warn: #f0b44c; --warn-bg: #3a2c12; --shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1426; --card: #172241; --ink: #e8edf9; --muted: #9aa7c7; --line: #2a3760;
+  --navy: #3b5fd0; --navy-2: #5a7ce6; --ok: #4fd08a; --ok-bg: #123524; --bad: #ff7b6b; --bad-bg: #3d1a17;
+  --warn: #f0b44c; --warn-bg: #3a2c12; --shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+header.top {
+  position: sticky; top: 0; z-index: 5; background: #16307a; color: #fff;
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top));
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+header.top img { width: 34px; height: 40px; object-fit: contain; }
+header.top .t { flex: 1; min-width: 0; }
+header.top .t b { display: block; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+header.top .t small { color: #f2c230; font-size: 12px; }
+.iconbtn { background: rgba(255,255,255,.12); border: 0; color: #fff; width: 40px; height: 40px; border-radius: 10px; font-size: 20px; cursor: pointer; }
+main { max-width: 760px; margin: 0 auto; padding: 16px 16px 90px; }
+h1 { font-size: 22px; margin: 8px 0 4px; }
+h2 { font-size: 18px; margin: 20px 0 8px; }
+p.sub { color: var(--muted); margin: 0 0 14px; }
+.hero { text-align: center; padding: 8px 0 4px; }
+.hero img { width: 96px; height: 115px; object-fit: contain; }
+.hero h1 { margin-top: 6px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+.stat { background: var(--card); border-radius: 12px; padding: 10px; text-align: center; box-shadow: var(--shadow); }
+.stat b { display: block; font-size: 22px; color: var(--navy-2); }
+.stat span { font-size: 12px; color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.tile {
+  background: var(--card); border: 0; border-radius: 14px; padding: 16px 12px; text-align: left; cursor: pointer;
+  color: var(--ink); box-shadow: var(--shadow); font: inherit; display: flex; flex-direction: column; gap: 4px; min-height: 96px;
+  border-bottom: 4px solid var(--navy-2); transition: transform .08s;
+}
+.tile:active { transform: scale(.97); }
+.tile .ic { font-size: 26px; }
+.tile b { font-size: 15px; }
+.tile small { color: var(--muted); font-size: 12px; }
+.tile.gold { border-bottom-color: var(--gold); }
+.tile.green { border-bottom-color: var(--ok); }
+.tile.red { border-bottom-color: var(--bad); }
+.list { display: flex; flex-direction: column; gap: 10px; }
+.row {
+  background: var(--card); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 12px; cursor: pointer; border: 0; width: 100%; text-align: left; font: inherit; color: var(--ink);
+}
+.row .ic { font-size: 26px; width: 36px; text-align: center; flex: none; }
+.row .mid { flex: 1; min-width: 0; }
+.row .mid b { display: block; }
+.row .mid small { color: var(--muted); font-size: 12px; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.bar i { display: block; height: 100%; background: var(--ok); border-radius: 3px; }
+.pill { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 99px; background: var(--line); color: var(--muted); flex: none; }
+.pill.ok { background: var(--ok-bg); color: var(--ok); }
+.pill.warn { background: var(--warn-bg); color: var(--warn); }
+.pill.bad { background: var(--bad-bg); color: var(--bad); }
+.strand { font-size: 12px; font-weight: 700; color: var(--navy-2); text-transform: uppercase; letter-spacing: .04em; margin: 18px 0 8px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 12px; padding: 13px 16px;
+  font: 600 15px system-ui, sans-serif; cursor: pointer; background: var(--navy-2); color: #fff; min-height: 48px;
+}
+.btn.gold { background: var(--gold); color: var(--gold-ink); }
+.btn.ghost { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 2px var(--line); }
+.btn.ok { background: var(--ok); color: #fff; }
+.btn.bad { background: var(--bad); color: #fff; }
+.btn.warn { background: var(--warn); color: #fff; }
+.btn:disabled { opacity: .45; cursor: default; }
+.btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.btns.three { grid-template-columns: 1fr 1fr 1fr; }
+.btns.one { grid-template-columns: 1fr; }
+.card { background: var(--card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+.qhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.progress { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
+.progress i { display: block; height: 100%; background: var(--gold); transition: width .25s; }
+.qtext { font-size: 18px; font-weight: 600; margin: 4px 0 14px; white-space: pre-line; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--line); color: var(--muted); text-transform: uppercase; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt {
+  display: flex; gap: 10px; align-items: flex-start; text-align: left; font: inherit; color: var(--ink); background: var(--bg);
+  border: 2px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; min-height: 48px;
+}
+.opt .l { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--card); border: 2px solid var(--line); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+.opt.sel { border-color: var(--navy-2); }
+.opt.sel .l { background: var(--navy-2); color: #fff; border-color: var(--navy-2); }
+.opt.right { border-color: var(--ok); background: var(--ok-bg); }
+.opt.right .l { background: var(--ok); border-color: var(--ok); color: #fff; }
+.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.opt.wrong .l { background: var(--bad); border-color: var(--bad); color: #fff; }
+.opt:disabled { cursor: default; }
+.tf { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tf .opt { justify-content: center; font-weight: 700; font-size: 17px; }
+textarea {
+  width: 100%; min-height: 90px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink);
+  font: inherit; padding: 10px; resize: vertical;
+}
+.sol { margin-top: 14px; border-radius: 12px; padding: 12px 14px; background: var(--ok-bg); border-left: 5px solid var(--ok); white-space: pre-line; }
+.sol.bad { background: var(--bad-bg); border-left-color: var(--bad); }
+.sol.info { background: var(--warn-bg); border-left-color: var(--warn); }
+.sol b.h { display: block; margin-bottom: 4px; }
+.navbar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); box-shadow: 0 -2px 10px rgba(0,0,0,.12); padding: 10px 16px; padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 4; }
+.navbar .in { max-width: 760px; margin: 0 auto; display: flex; gap: 10px; }
+.navbar .btn { flex: 1; }
+.flash {
+  min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer;
+  background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 22px; border-top: 6px solid var(--gold); white-space: pre-line;
+}
+.flash.back { border-top-color: var(--ok); text-align: left; align-items: stretch; }
+.flash .hint { color: var(--muted); font-size: 13px; margin-top: 14px; text-align: center; }
+.search { width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--card); color: var(--ink); font: inherit; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.chip { border: 2px solid var(--line); background: var(--card); color: var(--ink); border-radius: 99px; padding: 6px 14px; font: 600 14px system-ui, sans-serif; cursor: pointer; }
+.chip.on { background: var(--navy-2); border-color: var(--navy-2); color: #fff; }
+details.qa { background: var(--card); border-radius: 12px; box-shadow: var(--shadow); padding: 12px 14px; }
+details.qa summary { cursor: pointer; font-weight: 600; list-style: none; white-space: pre-line; }
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa summary::before { content: "▸ "; color: var(--navy-2); }
+details.qa[open] summary::before { content: "▾ "; }
+details.qa .from { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.big { font-size: 48px; font-weight: 800; color: var(--navy-2); text-align: center; margin: 6px 0 0; }
+.center { text-align: center; }
+.muted { color: var(--muted); }
+.timer { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--navy-2); }
+.toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: #14203d; color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 14px; z-index: 9; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.on { opacity: 1; }
+@media (min-width: 620px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="iconbtn" id="backBtn" aria-label="Back" onclick="goBack()">←</button>
+  <img src="crest.png" alt="St Louis High School crest">
+  <div class="t"><b id="hdrTitle">HPE Revision</b><small>St Louis High School · KCSE</small></div>
+  <button class="iconbtn" id="themeBtn" aria-label="Switch light or dark mode" onclick="toggleTheme()">◐</button>
+</header>
+<main id="app"></main>
+<div id="nav"></div>
+<div class="toast" id="toast"></div>
+
+<script src="questions.js"></script>
+<script>
+// ───────── Data ─────────
+// Flatten the bank into one list of normalised questions with stable keys (used for progress tracking).
+const ALL = [];
+const BY_TOPIC = {};
+function norm(raw, key, src, year) {
+  const [k] = raw;
+  if (k === 'm') return { key, type: 'mc', q: raw[1], opts: raw[2], ans: 0, expl: raw[3], shuffle: true, src, year };
+  if (k === 'M') return { key, type: 'mc', q: raw[1], opts: raw[2], ans: raw[3], expl: raw[4], shuffle: false, src, year };
+  if (k === 't') return { key, type: 'tf', q: raw[1], ans: raw[2], expl: raw[3], src, year };
+  return { key, type: 'sa', q: raw[1], expl: raw[2], marks: raw[3] || 1, src, year };
+}
+TOPICS.forEach(t => {
+  BY_TOPIC[t.id] = t.qs.map((raw, i) => norm(raw, t.id + ':' + i, 'Year ' + t.year + ' · ' + t.title, t.year));
+  ALL.push(...BY_TOPIC[t.id]);
+});
+PAPERS.forEach(p => p.sections.forEach((s, si) => {
+  s.norm = s.qs.map((raw, i) => norm(raw, p.id + ':' + si + ':' + i, p.title + ' · ' + s.title, 'paper'));
+  ALL.push(...s.norm);
+}));
+const BY_KEY = Object.fromEntries(ALL.map(q => [q.key, q]));
+
+// ───────── Saved progress (per device) ─────────
+const STORE = 'stlouis-hpe-v1';
+let save = { best: {}, seen: {}, wrong: {}, answered: 0, correct: 0, theme: '' };
+try { Object.assign(save, JSON.parse(localStorage.getItem(STORE)) || {}); } catch (e) {}
+function persist() { try { localStorage.setItem(STORE, JSON.stringify(save)); } catch (e) {} }
+function applyTheme() {
+  if (save.theme) document.documentElement.dataset.theme = save.theme; else delete document.documentElement.dataset.theme;
+}
+function toggleTheme() {
+  const dark = save.theme ? save.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  save.theme = dark ? 'light' : 'dark'; applyTheme(); persist();
+}
+applyTheme();
+
+// ───────── Helpers ─────────
+const $app = document.getElementById('app');
+const $nav = document.getElementById('nav');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+const LETTERS = 'ABCDEFGH';
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1600); }
+function setNav(html) { $nav.innerHTML = html ? '<div class="navbar"><div class="in">' + html + '</div></div>' : ''; }
+function setTitle(t) { document.getElementById('hdrTitle').textContent = t; document.title = t === 'HPE Revision' ? t : t + ' · HPE Revision'; }
+function pillFor(p) {
+  if (p == null) return '<span class="pill">New</span>';
+  return '<span class="pill ' + (p >= 80 ? 'ok' : p >= 50 ? 'warn' : 'bad') + '">' + p + '%</span>';
+}
+function typeLabel(q) { return q.type === 'mc' ? 'Multiple choice' : q.type === 'tf' ? 'True or false' : 'Written answer' + (q.marks ? ' · ' + q.marks + ' mark' + (q.marks > 1 ? 's' : '') : ''); }
+function answerText(q, order) {
+  if (q.type === 'mc') return LETTERS[order ? order.indexOf(q.ans) : q.ans] + '. ' + q.opts[q.ans] + (q.expl ? '\n\n' + q.expl : '');
+  if (q.type === 'tf') return (q.ans ? 'TRUE' : 'FALSE') + (q.expl ? ' – ' + q.expl : '');
+  return q.expl;
+}
+
+// ───────── Router (hash based, so the phone's back button works) ─────────
+let quiz = null, flash = null, timerId = null;
+function go(hash) { location.hash = hash; }
+function goBack() { if (location.hash && location.hash !== '#/') history.back(); }
+window.addEventListener('hashchange', route);
+function route() {
+  clearInterval(timerId); window.scrollTo(0, 0);
+  const parts = (location.hash.replace(/^#\/?/, '') || '').split('/');
+  document.getElementById('backBtn').style.visibility = parts[0] ? 'visible' : 'hidden';
+  setNav('');
+  switch (parts[0]) {
+    case 'year': return viewYear(+parts[1]);
+    case 'topic': return viewTopic(parts[1]);
+    case 'papers': return viewPapers();
+    case 'paper': return viewPaper(parts[1]);
+    case 'quiz': return quiz ? (quiz.done ? viewResults() : viewQuestion()) : go('/');
+    case 'flash': return flash ? viewFlash() : go('/');
+    case 'library': return viewLibrary();
+    case 'progress': return viewProgress();
+    case 'help': return viewHelp();
+    default: return viewHome();
+  }
+}
+
+// ───────── Home ─────────
+function viewHome() {
+  setTitle('HPE Revision');
+  const seen = Object.keys(save.seen).length, wrong = Object.keys(save.wrong).length;
+  $app.innerHTML = `
+    <div class="hero">
+      <img src="crest.png" alt="St Louis High School crest">
+      <h1>Health &amp; Physical Education</h1>
+      <p class="sub">KCSE revision · Year 10 &amp; 11 · ${ALL.length} questions with solutions</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>${seen}</b><span>Questions tried</span></div>
+      <div class="stat"><b>${pct(save.correct, save.answered)}%</b><span>Accuracy</span></div>
+      <div class="stat"><b>${wrong}</b><span>To revise</span></div>
+    </div>
+    <div class="grid">
+      <button class="tile" onclick="go('/year/10')"><span class="ic">📘</span><b>Year 10</b><small>${TOPICS.filter(t => t.year === 10).length} topics</small></button>
+      <button class="tile" onclick="go('/year/11')"><span class="ic">📗</span><b>Year 11</b><small>${TOPICS.filter(t => t.year === 11).length} topics</small></button>
+      <button class="tile gold" onclick="go('/papers')"><span class="ic">📝</span><b>Past Papers</b><small>KCSE 2024 &amp; 2025</small></button>
+      <button class="tile gold" onclick="startQuick()"><span class="ic">⚡</span><b>Quick Quiz</b><small>10 random questions</small></button>
+      <button class="tile gold" onclick="startExam()"><span class="ic">⏱️</span><b>Exam Mode</b><small>30 questions · timed</small></button>
+      <button class="tile" onclick="startFlash(ALL.filter(q => q.type === 'sa'), 'All flashcards')"><span class="ic">🃏</span><b>Flashcards</b><small>Written-answer practice</small></button>
+      <button class="tile red" onclick="startMistakes()"><span class="ic">🔁</span><b>My Mistakes</b><small>${wrong} to revise</small></button>
+      <button class="tile green" onclick="go('/library')"><span class="ic">📚</span><b>Solutions</b><small>Search all answers</small></button>
+      <button class="tile green" onclick="go('/progress')"><span class="ic">📊</span><b>My Progress</b><small>Scores by topic</small></button>
+      <button class="tile" onclick="startQuiz(shuffle(ALL.filter(q => q.type === 'tf')).slice(0, 15), 'True or False blitz', 'practice')"><span class="ic">✅</span><b>True / False</b><small>15 fast questions</small></button>
+      <button class="tile" onclick="startQuiz(shuffle(ALL.filter(q => q.type === 'mc')).slice(0, 15), 'Multiple choice mix', 'practice')"><span class="ic">🔤</span><b>Multiple Choice</b><small>15 questions</small></button>
+      <button class="tile" onclick="go('/help')"><span class="ic">❓</span><b>How to use</b><small>Tips for revision</small></button>
+    </div>`;
+}
+
+// ───────── Year & topic ─────────
+function topicBest(id) { return save.best[id]; }
+function viewYear(y) {
+  setTitle('Year ' + y);
+  const ts = TOPICS.filter(t => t.year === y);
+  let html = `<h1>Year ${y} topics</h1><p class="sub">Pick a topic, then quiz yourself or read the solutions.</p>
+    <div class="btns"><button class="btn gold" onclick="startYearQuiz(${y})">⚡ Mixed Year ${y} quiz</button>
+    <button class="btn ghost" onclick="startFlash(ALL.filter(q => q.year === ${y} && q.type === 'sa'), 'Year ${y} flashcards')">🃏 Year ${y} flashcards</button></div>`;
+  let last = '';
+  ts.forEach(t => {
+    if (t.strand !== last) { html += `<div class="strand">${esc(t.strand)}</div>`; last = t.strand; }
+    const b = topicBest(t.id);
+    html += `<button class="row" onclick="go('/topic/${t.id}')" style="margin-bottom:10px">
+      <span class="ic">${t.icon}</span>
+      <span class="mid"><b>${esc(t.title)}</b><small>${t.qs.length} questions</small>
+        <span class="bar"><i style="width:${b || 0}%"></i></span></span>
+      ${pillFor(b)}</button>`;
+  });
+  $app.innerHTML = html;
+}
+function startYearQuiz(y) { startQuiz(shuffle(ALL.filter(q => q.year === y)).slice(0, 15), 'Year ' + y + ' mixed quiz', 'practice'); }
+
+function viewTopic(id) {
+  const t = TOPICS.find(t => t.id === id); if (!t) return go('/');
+  setTitle(t.title);
+  const qs = BY_TOPIC[id];
+  const n = { mc: 0, tf: 0, sa: 0 }; qs.forEach(q => n[q.type]++);
+  const b = topicBest(id);
+  $app.innerHTML = `
+    <div class="center"><div style="font-size:52px">${t.icon}</div>
+    <h1>${esc(t.title)}</h1><p class="sub">Year ${t.year} · ${esc(t.strand)}</p></div>
+    <div class="stats">
+      <div class="stat"><b>${n.mc}</b><span>Multiple choice</span></div>
+      <div class="stat"><b>${n.tf}</b><span>True / false</span></div>
+      <div class="stat"><b>${n.sa}</b><span>Written</span></div>
+    </div>
+    <p class="center muted">Best score: <b>${b == null ? 'not tried yet' : b + '%'}</b></p>
+    <div class="btns one">
+      <button class="btn" onclick="startTopic('${id}', 'practice')">▶️ Start practice quiz</button>
+    </div>
+    <div class="btns">
+      <button class="btn gold" onclick="startTopic('${id}', 'exam')">⏱️ Test mode</button>
+      <button class="btn ghost" onclick="topicDrill('${id}', 'flash')">🃏 Flashcards</button>
+      <button class="btn ghost" onclick="topicDrill('${id}', 'check')">✅ Quick check</button>
+      <button class="btn ghost" onclick="topicDrill('${id}', 'written')">✍️ Written only</button>
+    </div>
+    <h2>📖 All questions &amp; solutions</h2>
+    <div class="list">${qs.map(qaHTML).join('')}</div>`;
+}
+function startTopic(id, mode) {
+  const t = TOPICS.find(t => t.id === id);
+  startQuiz(shuffle(BY_TOPIC[id]), t.title, mode, id);
+}
+function topicDrill(id, kind) {
+  const t = TOPICS.find(t => t.id === id), qs = BY_TOPIC[id];
+  if (kind === 'flash') return startFlash(qs, t.title);
+  if (kind === 'check') return startQuiz(shuffle(qs.filter(q => q.type !== 'sa')), t.title + ' – quick check', 'practice', id);
+  startQuiz(qs.filter(q => q.type === 'sa'), t.title + ' – written', 'practice', id);
+}
+function qaHTML(q, i) {
+  return `<details class="qa"><summary>${i != null ? (i + 1) + '. ' : ''}${esc(q.q)}${q.type === 'tf' ? ' (True or false?)' : ''}</summary>
+    ${q.type === 'mc' ? '<div class="muted" style="margin-top:8px">' + q.opts.map((o, j) => LETTERS[j] + '. ' + esc(o)).join('<br>') + '</div>' : ''}
+    <div class="sol"><b class="h">✔ Solution</b>${esc(answerText(q))}</div>
+    <div class="from">${esc(q.src)}</div></details>`;
+}
+
+// ───────── Past papers ─────────
+function viewPapers() {
+  setTitle('Past Papers');
+  $app.innerHTML = `<h1>KCSE past papers</h1><p class="sub">Every question from the real exams, with model answers.</p>
+    <div class="list">${PAPERS.map(p => `<button class="row" onclick="go('/paper/${p.id}')"><span class="ic">📝</span>
+      <span class="mid"><b>${esc(p.title)}</b><small>${esc(p.subtitle)}</small></span>${pillFor(save.best[p.id])}</button>`).join('')}</div>`;
+}
+function viewPaper(id) {
+  const p = PAPERS.find(p => p.id === id); if (!p) return go('/papers');
+  setTitle(p.title);
+  const all = p.sections.flatMap(s => s.norm);
+  let html = `<h1>${esc(p.title)}</h1><p class="sub">${esc(p.subtitle)} · ${all.length} questions</p>
+    <div class="btns"><button class="btn gold" onclick="startPaper('${id}', -1, 'exam')">⏱️ Sit the full paper</button>
+    <button class="btn" onclick="startPaper('${id}', -1, 'practice')">▶️ Practise full paper</button></div>`;
+  p.sections.forEach((s, si) => {
+    const b = save.best[p.id + ':' + si];
+    html += `<div class="card" style="margin-top:12px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+      <b>${esc(s.title)}</b>${pillFor(b)}</div><small class="muted">${s.norm.length} questions</small>
+      <div class="btns three"><button class="btn" onclick="startPaper('${id}', ${si}, 'practice')">▶️ Quiz</button>
+      <button class="btn ghost" onclick="startPaper('${id}', ${si}, 'exam')">⏱️ Test</button>
+      <button class="btn ghost" onclick="toggleSol(this, '${id}', ${si})">📖 Answers</button></div><div class="list"></div></div>`;
+  });
+  $app.innerHTML = html;
+}
+function toggleSol(btn, id, si) {
+  const box = btn.parentElement.nextElementSibling;
+  if (box.innerHTML) { box.innerHTML = ''; btn.textContent = '📖 Answers'; return; }
+  box.innerHTML = PAPERS.find(p => p.id === id).sections[si].norm.map(qaHTML).join('');
+  btn.textContent = '✖ Hide';
+}
+function startPaper(id, si, mode) {
+  const p = PAPERS.find(p => p.id === id);
+  const qs = si < 0 ? p.sections.flatMap(s => s.norm) : p.sections[si].norm;
+  startQuiz(qs, si < 0 ? p.title : p.sections[si].title, mode, si < 0 ? id : id + ':' + si);
+}
+
+// ───────── Quiz engine ─────────
+// mode "practice": feedback after each question. mode "exam": answers hidden until the end, with a timer.
+function startQuiz(qs, title, mode, bestKey) {
+  if (!qs.length) { toast('No questions here yet'); return; }
+  quiz = {
+    title, mode, bestKey, i: 0, done: false, start: Date.now(),
+    items: qs.map(q => ({ q, order: q.type === 'mc' && q.shuffle ? shuffle(q.opts.map((_, j) => j)) : q.opts ? q.opts.map((_, j) => j) : null, pick: null, score: null, text: '', revealed: false })),
+  };
+  location.hash === '#/quiz' ? route() : go('/quiz');
+}
+function startQuick() { startQuiz(shuffle(ALL).slice(0, 10), 'Quick Quiz', 'practice'); }
+function startExam() {
+  // A balanced mock exam: mostly objective questions plus some written ones.
+  const obj = shuffle(ALL.filter(q => q.type !== 'sa')).slice(0, 24), sa = shuffle(ALL.filter(q => q.type === 'sa')).slice(0, 6);
+  startQuiz([...obj, ...sa], 'Mock Exam', 'exam');
+}
+function startMistakes() {
+  const qs = Object.keys(save.wrong).map(k => BY_KEY[k]).filter(Boolean);
+  if (!qs.length) { toast('No mistakes saved – well done! 🎉'); return; }
+  startQuiz(shuffle(qs), 'My Mistakes', 'practice');
+}
+
+function viewQuestion() {
+  const it = quiz.items[quiz.i], q = it.q, n = quiz.items.length;
+  const locked = quiz.mode === 'practice' && it.score !== null;
+  setTitle(quiz.title);
+  let body = '';
+  if (q.type === 'mc') {
+    body = '<div class="opts">' + it.order.map((j, pos) => {
+      let cls = it.pick === j ? ' sel' : '';
+      if (locked) cls = j === q.ans ? ' right' : it.pick === j ? ' wrong' : '';
+      return `<button class="opt${cls}" ${locked ? 'disabled' : ''} onclick="pick(${j})"><span class="l">${LETTERS[pos]}</span><span>${esc(q.opts[j])}</span></button>`;
+    }).join('') + '</div>';
+  } else if (q.type === 'tf') {
+    body = '<div class="tf">' + [true, false].map(v => {
+      let cls = it.pick === v ? ' sel' : '';
+      if (locked) cls = v === q.ans ? ' right' : it.pick === v ? ' wrong' : '';
+      return `<button class="opt${cls}" ${locked ? 'disabled' : ''} onclick="pick(${v})">${v ? '✔ True' : '✘ False'}</button>`;
+    }).join('') + '</div>';
+  } else {
+    body = `<textarea id="ans" placeholder="Write your answer here (optional), then tap Show solution…" oninput="quiz.items[quiz.i].text=this.value" ${it.revealed ? 'readonly' : ''}>${esc(it.text)}</textarea>`;
+    if (it.revealed) {
+      body += `<div class="sol"><b class="h">✔ Model answer</b>${esc(q.expl)}</div>
+        <p class="muted" style="margin:12px 0 6px">Compare with your answer. How did you do?</p>
+        <div class="btns three">
+          <button class="btn ${it.score === 1 ? 'ok' : 'ghost'}" onclick="selfMark(1)">✔ Got it</button>
+          <button class="btn ${it.score === .5 ? 'warn' : 'ghost'}" onclick="selfMark(.5)">≈ Partly</button>
+          <button class="btn ${it.score === 0 ? 'bad' : 'ghost'}" onclick="selfMark(0)">✘ Missed</button>
+        </div>`;
+    } else {
+      body += `<div class="btns one"><button class="btn gold" onclick="reveal()">👁️ Show solution</button></div>`;
+    }
+  }
+  if (locked && q.type !== 'sa') {
+    const good = it.score === 1;
+    body += `<div class="sol ${good ? '' : 'bad'}"><b class="h">${good ? '🎉 Correct!' : '❌ Not quite'}</b>${esc(answerText(q, it.order))}</div>`;
+  }
+  const answeredCount = quiz.items.filter(x => x.score !== null || x.pick !== null).length;
+  $app.innerHTML = `
+    <div class="qhead"><span>Question ${quiz.i + 1} of ${n}</span>
+      ${quiz.mode === 'exam' ? '<span class="timer" id="timer"></span>' : `<span>Score: ${scoreOf().toFixed(1).replace('.0', '')}</span>`}</div>
+    <div class="progress"><i style="width:${pct(quiz.i + (locked ? 1 : 0), n)}%"></i></div>
+    <div class="card">
+      <span class="tag">${typeLabel(q)}</span>
+      <div class="qtext">${esc(q.q)}</div>
+      ${body}
+      <div class="from muted" style="font-size:12px;margin-top:12px">${esc(q.src)}</div>
+    </div>
+    ${quiz.mode === 'exam' ? `<p class="center muted">${answeredCount} of ${n} answered · <a href="javascript:finish()" style="color:var(--navy-2)">Finish &amp; mark now</a></p>` : ''}`;
+  const last = quiz.i === n - 1;
+  const canNext = quiz.mode === 'exam' || locked || q.type === 'sa' && it.score !== null;
+  let nav = `<button class="btn ghost" ${quiz.i === 0 ? 'disabled' : ''} onclick="move(-1)">◀ Back</button>`;
+  if (quiz.mode === 'practice' && q.type !== 'sa' && !locked) nav += `<button class="btn" ${it.pick === null ? 'disabled' : ''} onclick="check()">Check ✔</button>`;
+  else nav += `<button class="btn ${last ? 'gold' : ''}" ${canNext ? '' : 'disabled'} onclick="${last ? 'finish()' : 'move(1)'}">${last ? 'Finish 🏁' : 'Next ▶'}</button>`;
+  if (quiz.mode === 'practice' && !locked && !(q.type === 'sa' && it.revealed)) nav = nav.replace('◀ Back</button>', '◀ Back</button><button class="btn ghost" onclick="skip()">Skip</button>');
+  setNav(nav);
+  if (quiz.mode === 'exam') { tick(); timerId = setInterval(tick, 1000); }
+}
+function tick() {
+  const el = document.getElementById('timer'); if (!el || !quiz) return;
+  const s = Math.floor((Date.now() - quiz.start) / 1000);
+  el.textContent = '⏱ ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+function scoreOf() { return quiz.items.reduce((a, x) => a + (x.score || 0), 0); }
+function pick(v) {
+  const it = quiz.items[quiz.i];
+  it.pick = v;
+  if (quiz.mode === 'exam') it.score = (v === it.q.ans) ? 1 : 0;
+  viewQuestion();
+}
+function record(q, ok) {
+  save.seen[q.key] = 1; save.answered++;
+  if (ok) { save.correct++; delete save.wrong[q.key]; } else save.wrong[q.key] = 1;
+  persist();
+}
+function check() {
+  const it = quiz.items[quiz.i];
+  it.score = it.pick === it.q.ans ? 1 : 0;
+  record(it.q, it.score === 1);
+  viewQuestion();
+}
+function reveal() { quiz.items[quiz.i].revealed = true; viewQuestion(); }
+function selfMark(v) {
+  const it = quiz.items[quiz.i], first = it.score === null;
+  it.score = v;
+  if (quiz.mode === 'practice' && first) record(it.q, v === 1);
+  viewQuestion();
+}
+function skip() { move(1, true); }
+function move(d, skipping) {
+  const ni = quiz.i + d;
+  if (ni >= quiz.items.length) return skipping ? finish() : null;
+  if (ni < 0) return;
+  quiz.i = ni; clearInterval(timerId); viewQuestion(); window.scrollTo(0, 0);
+}
+function finish() {
+  clearInterval(timerId);
+  if (quiz.mode === 'exam') {
+    const unmarked = quiz.items.filter(x => x.q.type === 'sa' && x.score === null).length;
+    if (unmarked && !confirm(unmarked + ' written answer(s) are not self-marked yet and will count as 0. Finish anyway?')) return;
+    quiz.items.forEach(x => { if (x.score !== null) record(x.q, x.score === 1); else if (x.pick !== null) record(x.q, false); });
+  }
+  quiz.done = true; quiz.time = Math.floor((Date.now() - quiz.start) / 1000);
+  const p = pct(scoreOf(), quiz.items.length);
+  if (quiz.bestKey && (save.best[quiz.bestKey] == null || p > save.best[quiz.bestKey])) { save.best[quiz.bestKey] = p; quiz.newBest = true; }
+  persist();
+  viewResults();
+}
+function viewResults() {
+  const n = quiz.items.length, s = scoreOf(), p = pct(s, n);
+  const msg = p >= 80 ? 'Excellent work! 🌟' : p >= 60 ? 'Good job – keep going! 👍' : p >= 40 ? 'Getting there – revise and retry 💪' : 'Keep practising – read the solutions 📖';
+  setTitle('Results');
+  $app.innerHTML = `
+    <div class="card center">
+      <div style="font-size:44px">${p >= 80 ? '🏆' : p >= 50 ? '🎯' : '📚'}</div>
+      <div class="big">${p}%</div>
+      <p><b>${s.toFixed(1).replace('.0', '')}</b> out of <b>${n}</b> · ${esc(quiz.title)}</p>
+      <p class="muted">${msg}${quiz.newBest ? '<br>⭐ New best score!' : ''}${quiz.time ? '<br>Time: ' + Math.floor(quiz.time / 60) + ' min ' + quiz.time % 60 + ' s' : ''}</p>
+    </div>
+    <div class="btns">
+      <button class="btn" onclick="retry(false)">🔄 Try again</button>
+      <button class="btn bad" ${quiz.items.some(x => x.score !== 1) ? '' : 'disabled'} onclick="retry(true)">🔁 Redo wrong ones</button>
+    </div>
+    <h2>Review your answers</h2>
+    <div class="list">${quiz.items.map((x, i) => {
+      const q = x.q, mark = x.score === 1 ? '✅' : x.score === .5 ? '🟡' : x.score === 0 ? '❌' : '⏭️';
+      let yours = '';
+      if (q.type === 'mc' && x.pick !== null) yours = 'Your answer: ' + q.opts[x.pick];
+      if (q.type === 'tf' && x.pick !== null) yours = 'Your answer: ' + (x.pick ? 'True' : 'False');
+      if (q.type === 'sa' && x.text) yours = 'Your answer: ' + x.text;
+      return `<details class="qa"><summary>${mark} ${i + 1}. ${esc(q.q)}</summary>
+        ${yours ? '<div class="muted" style="margin-top:8px;white-space:pre-line">' + esc(yours) + '</div>' : ''}
+        <div class="sol"><b class="h">✔ Solution</b>${esc(answerText(q, x.order))}</div></details>`;
+    }).join('')}</div>`;
+  setNav(`<button class="btn ghost" onclick="go('/')">🏠 Home</button><button class="btn gold" onclick="startQuick()">⚡ New quick quiz</button>`);
+}
+function retry(onlyWrong) {
+  const qs = quiz.items.filter(x => !onlyWrong || x.score !== 1).map(x => x.q);
+  startQuiz(shuffle(qs), quiz.title + (onlyWrong ? ' – retry' : ''), quiz.mode, onlyWrong ? null : quiz.bestKey);
+}
+
+// ───────── Flashcards ─────────
+function startFlash(qs, title) {
+  if (!qs.length) { toast('No cards here yet'); return; }
+  flash = { title, cards: shuffle(qs), i: 0, back: false, known: 0 };
+  location.hash === '#/flash' ? route() : go('/flash');
+}
+function viewFlash() {
+  setTitle(flash.title);
+  const n = flash.cards.length;
+  if (flash.i >= n) {
+    $app.innerHTML = `<div class="card center"><div style="font-size:44px">🃏</div><h1>Deck finished!</h1>
+      <p>You knew <b>${flash.known}</b> of <b>${n}</b> cards.</p></div>`;
+    setNav(`<button class="btn ghost" onclick="go('/')">🏠 Home</button><button class="btn" onclick="startFlash(flash.cards, flash.title)">🔄 Shuffle &amp; restart</button>`);
+    return;
+  }
+  const q = flash.cards[flash.i];
+  $app.innerHTML = `
+    <div class="qhead"><span>Card ${flash.i + 1} of ${n}</span><span>Known: ${flash.known}</span></div>
+    <div class="progress"><i style="width:${pct(flash.i, n)}%"></i></div>
+    <div class="flash ${flash.back ? 'back' : ''}" onclick="flipCard()">
+      ${flash.back
+        ? `<b style="color:var(--ok)">✔ Answer</b><div style="margin-top:8px">${esc(answerText(q))}</div><div class="hint">Tap to see the question again</div>`
+        : `<span class="tag">${typeLabel(q)}</span><div class="qtext" style="margin-top:10px">${esc(q.q)}${q.type === 'tf' ? '\n(True or false?)' : ''}</div>
+           ${q.type === 'mc' ? '<div class="muted">' + q.opts.map((o, j) => LETTERS[j] + '. ' + esc(o)).join('<br>') + '</div>' : ''}
+           <div class="hint">Think of your answer, then tap the card to flip it</div>`}
+    </div>
+    <p class="center muted" style="font-size:12px">${esc(q.src)}</p>`;
+  setNav(flash.back
+    ? `<button class="btn bad" onclick="nextCard(false)">✘ Study again</button><button class="btn ok" onclick="nextCard(true)">✔ I knew it</button>`
+    : `<button class="btn ghost" ${flash.i === 0 ? 'disabled' : ''} onclick="flash.i--;flash.back=false;viewFlash()">◀ Prev</button><button class="btn gold" onclick="flipCard()">🔄 Flip card</button>`);
+}
+function flipCard() { flash.back = !flash.back; viewFlash(); }
+function nextCard(knew) {
+  const q = flash.cards[flash.i];
+  if (knew) { flash.known++; delete save.wrong[q.key]; } else save.wrong[q.key] = 1;
+  save.seen[q.key] = 1; persist();
+  flash.i++; flash.back = false; viewFlash();
+}
+
+// ───────── Solutions library ─────────
+let libFilter = 'all', libSearch = '';
+function viewLibrary() {
+  setTitle('Solutions');
+  $app.innerHTML = `<h1>📚 Solutions library</h1><p class="sub">Search every question and model answer.</p>
+    <input class="search" id="lib-q" type="search" placeholder="Search e.g. BMI, condom, diaphragm…" value="${esc(libSearch)}">
+    <div class="chips">${[['all', 'All'], ['10', 'Year 10'], ['11', 'Year 11'], ['paper', 'Past papers'], ['sa', 'Written only']]
+      .map(([v, l]) => `<button class="chip ${libFilter === v ? 'on' : ''}" onclick="libFilter='${v}';viewLibrary()">${l}</button>`).join('')}</div>
+    <p class="muted" id="lib-n"></p><div class="list" id="lib-list"></div>`;
+  const inp = document.getElementById('lib-q');
+  inp.addEventListener('input', () => { libSearch = inp.value; renderLib(); });
+  renderLib();
+}
+function renderLib() {
+  const s = libSearch.trim().toLowerCase();
+  const res = ALL.filter(q => {
+    if (libFilter === 'sa' && q.type !== 'sa') return false;
+    if (['10', '11', 'paper'].includes(libFilter) && String(q.year) !== libFilter) return false;
+    if (!s) return true;
+    return (q.q + ' ' + answerText(q) + ' ' + (q.opts || []).join(' ') + ' ' + q.src).toLowerCase().includes(s);
+  });
+  document.getElementById('lib-n').textContent = res.length + ' question' + (res.length === 1 ? '' : 's') + (res.length > 60 ? ' – showing the first 60, search to narrow down' : '');
+  document.getElementById('lib-list').innerHTML = res.slice(0, 60).map(q => qaHTML(q)).join('');
+}
+
+// ───────── Progress ─────────
+function viewProgress() {
+  setTitle('My Progress');
+  const row = (label, icon, key, count) => `<div class="row" style="cursor:default"><span class="ic">${icon}</span>
+    <span class="mid"><b>${esc(label)}</b><small>${count} questions</small><span class="bar"><i style="width:${save.best[key] || 0}%"></i></span></span>${pillFor(save.best[key])}</div>`;
+  $app.innerHTML = `<h1>📊 My progress</h1><p class="sub">Best scores are saved on this device.</p>
+    <div class="stats">
+      <div class="stat"><b>${Object.keys(save.seen).length}/${ALL.length}</b><span>Questions tried</span></div>
+      <div class="stat"><b>${save.answered}</b><span>Answers given</span></div>
+      <div class="stat"><b>${pct(save.correct, save.answered)}%</b><span>Accuracy</span></div>
+    </div>
+    ${[10, 11].map(y => `<div class="strand">Year ${y}</div><div class="list">${TOPICS.filter(t => t.year === y).map(t => row(t.title, t.icon, t.id, t.qs.length)).join('')}</div>`).join('')}
+    <div class="strand">Past papers</div><div class="list">${PAPERS.map(p => row(p.title, '📝', p.id, p.sections.reduce((a, s) => a + s.norm.length, 0))).join('')}</div>
+    <div class="btns one" style="margin-top:20px"><button class="btn ghost" onclick="resetProgress()">🗑️ Reset my progress</button></div>`;
+}
+function resetProgress() {
+  if (!confirm('Delete all saved scores and mistakes on this device?')) return;
+  save = { best: {}, seen: {}, wrong: {}, answered: 0, correct: 0, theme: save.theme }; persist(); viewProgress(); toast('Progress reset');
+}
+
+// ───────── Help ─────────
+function viewHelp() {
+  setTitle('How to use');
+  $app.innerHTML = `<h1>❓ How to use this app</h1>
+    <div class="card"><ul style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:8px">
+      <li><b>Year 10 / Year 11</b> – every topic in the KCSE syllabus. Open a topic to quiz yourself or read all the answers.</li>
+      <li><b>Practice quiz</b> – you get the answer and an explanation after every question.</li>
+      <li><b>Test / Exam mode</b> – answers stay hidden until the end, and a timer runs, just like the real exam.</li>
+      <li><b>Written answers</b> – write your answer, tap <i>Show solution</i>, then mark yourself honestly: Got it, Partly or Missed.</li>
+      <li><b>Past papers</b> – the full KCSE 2024 and 2025 papers with model answers. Diagram questions show the labels to learn.</li>
+      <li><b>My Mistakes</b> – every question you get wrong is saved here, and it disappears once you get it right.</li>
+      <li><b>Flashcards</b> – think of the answer, flip the card, and be honest!</li>
+      <li>Works <b>offline</b> once opened. Add it to your home screen from the browser menu.</li>
+    </ul></div>
+    <h2>Exam tips 📝</h2>
+    <div class="card"><ul style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:8px">
+      <li><b>List / State / Name</b> – short points; one point = one mark.</li>
+      <li><b>Describe</b> – say what it is and what it looks like or does.</li>
+      <li><b>Explain / Discuss</b> – give the point <i>and</i> the reason (use "because…" or "this means…").</li>
+      <li>Check the marks: a 3-mark answer needs about 3 clear points.</li>
+      <li>Use Kiribati examples where you can – examiners like local context.</li>
+    </ul></div>`;
+}
+
+route();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>

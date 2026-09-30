@@ -1,0 +1,14 @@
+{
+  "name": "St Louis HPE Revision – KCSE Year 10 & 11",
+  "short_name": "HPE Revision",
+  "description": "Quizzes, flashcards, past papers and model answers for KCSE Health and Physical Education, Years 10 and 11. Works offline.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#16307a",
+  "theme_color": "#16307a",
+  "icons": [
+    { "src": "crest.png", "sizes": "178x213", "type": "image/png", "purpose": "any" }
+  ]
+}
