@@ -10,8 +10,9 @@ here = Path(__file__).parent
 page = (here / 'index.html').read_text()
 for js in ('questions.js', 'notes.js'):
     page = page.replace(f'<script src="{js}"></script>', '<script>\n' + (here / js).read_text() + '\n</script>')
-crest = 'data:image/png;base64,' + base64.b64encode((here / 'crest.png').read_bytes()).decode()
-page = page.replace('src="crest.png"', f'src="{crest}"').replace('href="crest.png"', f'href="{crest}"')
+for png in ('crest.png', 'icon-192.png'):
+    uri = 'data:image/png;base64,' + base64.b64encode((here / png).read_bytes()).decode()
+    page = page.replace(f'src="{png}"', f'src="{uri}"').replace(f'href="{png}"', f'href="{uri}"')
 page = re.sub(r'<link rel="manifest"[^>]*>\n', '', page)
 page = re.sub(r"if \('serviceWorker'.*\n", '', page)
 page = page.replace('<title>HPE Revision</title>', '<title>St Louis HPE Revision</title>')

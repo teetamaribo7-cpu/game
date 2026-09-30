@@ -1,0 +1,76 @@
+# Builds the St Louis HPE Revision app and publishes a GitHub release.
+# Run it by pushing a tag such as hpe-v1.0.0, or from the Actions tab ("Run workflow").
+name: HPE app release
+
+on:
+  push:
+    tags: ['hpe-v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number, e.g. 1.0.0'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Work out version
+        id: v
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then V="${GITHUB_REF_NAME#hpe-v}"; else V="${{ inputs.version }}"; fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "tag=hpe-v$V" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build offline file and web app zip
+        run: |
+          python3 hpe/build.py
+          mkdir -p dist
+          cp hpe/st-louis-hpe-offline.html dist/
+          (cd hpe && zip -q ../dist/hpe-web-app.zip index.html questions.js notes.js manifest.json sw.js *.png)
+
+      - name: Build Android APK
+        working-directory: android-app
+        run: |
+          npm install --no-audit --no-fund
+          mkdir -p www
+          cp ../hpe/index.html ../hpe/questions.js ../hpe/notes.js ../hpe/manifest.json ../hpe/sw.js ../hpe/*.png www/
+          npx cap add android
+          cp -r icons/* android/app/src/main/res/
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"${{ steps.v.outputs.version }}\"/" android/app/build.gradle
+          npx cap sync android
+          cd android && ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "../../dist/HPE-Revision-${{ steps.v.outputs.version }}.apk"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.v.outputs.tag }}
+          name: St Louis HPE Revision ${{ steps.v.outputs.version }}
+          files: dist/*
+          body: |
+            KCSE Health & Physical Education revision for Year 10 and 11: topic notes, 250 multiple-choice quiz questions, and the 2024 and 2025 past papers with full solutions.
+
+            **Android phones:** download `HPE-Revision-${{ steps.v.outputs.version }}.apk` and open it. If the phone asks, allow "Install unknown apps" for your browser or file manager. The app works without internet.
+
+            **Any phone or computer (no install):** download `st-louis-hpe-offline.html` and open it in Chrome. It works without internet.
+
+            **iPhone:** open the hosted web app in Safari, then tap Share → Add to Home Screen.
+
+            **Teachers:** `hpe-web-app.zip` holds the web version for hosting on any website.
