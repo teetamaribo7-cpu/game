@@ -1,6 +1,6 @@
 // Offline cache: the game works with no internet after the first visit.
-const CACHE = 'tewa-v4';
-const FILES = ['./', './index.html', './manifest.json', './icon.svg'];
+const CACHE = 'tewa-v5';
+const FILES = ['./', './index.html', './manifest.json', './icon.svg', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

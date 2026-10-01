@@ -57,6 +57,12 @@ Bigger fish score more, but they take longer to reel in. That gives sharks more 
 | Drop line | Tap | Space or ↓ | Red: S · Blue: ↓ |
 | Pause | Pause button | P or Esc | P or Esc |
 
+## Install on Windows
+1. Open **https://teetamaribo7-cpu.github.io/game/** in **Microsoft Edge** or **Google Chrome**.
+2. Edge: click the **App available / Install** icon in the address bar, or go to **⋯ → Apps → Install Te Wa**.
+   Chrome: click the **Install** icon in the address bar, or go to **⋮ → Cast, save and share → Install page as app**.
+3. Te Wa gets a Start menu entry and a desktop shortcut, opens in its own window and works offline.
+
 ## Run it
 Put the files on any web host. GitHub Pages works: go to Settings → Pages → Deploy from a branch.
 To test locally:
