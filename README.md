@@ -22,13 +22,38 @@ and bring home the best catch before sunset.
 
 Bigger fish score more, but they take longer to reel in. That gives sharks more time to steal them.
 
-## Coins and Shop
-- **Gold coins** float in the lagoon. Touch one with your fishing line to collect it. Most coins are worth 1, and big glowing coins deeper down are worth 5.
-- You also earn **+2 coins** for each correct quiz answer and **+5 coins** for each new Fish Book discovery.
-- Coins are saved in a wallet on the device and spent in the **Shop**:
-  - **Sails:** Pandanus (free), Lagoon (20), Sunset (40), Kiribati flag (60), Golden (100).
-  - **Upgrades:** Extra hook, 4 hooks per round (80). Fast reel, reel in 30% faster (120).
-- These are game coins only. There is no real money and nothing to buy, so the game stays safe for children.
+## Coins, market and gear (a fisher's career)
+**Earn coins**
+- Sell your catch at the **fish market** after every trip. Each fish sells by weight (kg × price per kg), and the market screen shows the maths.
+- Touch **gold coins** in the water with your line (worth 1, or 5 for big coins).
+- Get **+2 coins** for each correct quiz answer and **+5 coins** for each new Fish Book discovery.
+
+**Market prices** (coins per kg): milkfish 2, skipjack 3, flying fish 8, bonefish 3, giant trevally 2, yellowfin 4, mahi-mahi 3.
+
+**Spend coins in the Shop**
+| Gear | Price | What it does |
+|---|---|---|
+| Hand line | free | lands fish up to 5 kg |
+| Bamboo rod | 40 | up to 12 kg |
+| Fibreglass rod | 150 | up to 30 kg |
+| Big-game reel | 400 | up to 80 kg |
+| Paddle canoe | free | Lagoon only |
+| Sailing canoe | 120 | faster, reaches the Reef edge |
+| Fibreglass boat | 300 | strong enough for the Open ocean (needs a motor) |
+| 15 hp outboard | 200 | reaches the Open ocean; fuel 6 coins a trip |
+| 40 hp outboard | 450 | much faster; fuel 10 coins a trip |
+| Extra hook / Fast reel | 80 / 120 | 4 hooks per round / reel 30% faster |
+| Sails | 0–100 | Pandanus, Lagoon, Sunset, Kiribati flag, Golden |
+
+If a fish is heavier than your rod can hold, the line snaps and the fish escapes. You need to save up for better gear.
+
+**Fishing grounds** (chosen before each trip)
+- **Lagoon:** milkfish, flying fish, small skipjack, bonefish.
+- **Reef edge** (sailing canoe): bonefish and giant trevally up to 35 kg, on a shallow reef.
+- **Open ocean** (fibreglass boat + motor, costs fuel): skipjack, yellowfin tuna up to 60 kg, mahi-mahi.
+
+Players learn that **profit = sales − fuel**, and the quiz includes market maths questions.
+These are game coins only. There is no real money.
 
 ## Learning features (for students and teachers)
 - **Fish Book.** The first time a player catches or meets a creature, the game pauses and shows a fact card with an animated picture, its Kiribati name, its English name and three simple facts. Cards collect in the Fish Book on the menu, so children can try to find all 7.

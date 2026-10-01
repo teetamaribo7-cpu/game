@@ -286,14 +286,42 @@
   </div>
 </div>
 
+<div class="screen" id="groundPick" hidden>
+  <div class="panel">
+    <h2 data-t="groundTitle"></h2>
+    <p class="sub" id="gearLine" style="margin:0"></p>
+    <div class="shop" id="groundList"></div>
+    <div class="meta"><span data-t="wallet"></span><b class="coins"><i class="coin"></i><span id="walletGround">0</span></b></div>
+    <button class="btn" data-back data-t="back"></button>
+  </div>
+</div>
+
+<div class="screen" id="market" hidden>
+  <div class="panel">
+    <h2 data-t="marketTitle"></h2>
+    <p class="sub" id="marketWho" style="margin:0"></p>
+    <p class="greet" data-t="marketIntro"></p>
+    <table id="marketTable"><thead><tr><th data-t="catchCol"></th><th>kg</th><th>× price</th><th>= coins</th></tr></thead><tbody></tbody></table>
+    <div class="meta"><span data-t="total"></span><b class="coins"><i class="coin"></i><span id="marketTotal">0</span></b></div>
+    <p class="keys" style="margin:0" data-t="marketTip"></p>
+    <button class="btn primary" id="sellBtn" data-t="sell"></button>
+  </div>
+</div>
+
 <div class="screen" id="shop" hidden>
   <div class="panel">
     <div class="meta"><h2 data-t="shopTitle"></h2><b class="coins"><i class="coin"></i><span id="walletShop">0</span></b></div>
     <canvas id="shopPreview"></canvas>
-    <div class="label" data-t="sails"></div>
-    <div class="shop" id="sailList"></div>
+    <div class="label" data-t="rods"></div>
+    <div class="shop" id="rodList"></div>
+    <div class="label" data-t="boats"></div>
+    <div class="shop" id="boatList"></div>
+    <div class="label" data-t="motors"></div>
+    <div class="shop" id="motorList"></div>
     <div class="label" data-t="upgrades"></div>
     <div class="shop" id="upList"></div>
+    <div class="label" data-t="sails"></div>
+    <div class="shop" id="sailList"></div>
     <p class="keys" style="margin:0" data-t="shopNote"></p>
     <button class="btn" data-back data-t="back"></button>
   </div>
@@ -361,7 +389,9 @@ const TEXT = {
       'You have 3 hooks. The round ends at sunset.',
       'When you find a new sea creature, a card teaches you about it. Collect them all in your Fish Book.',
       'After each round, answer the bonus quiz. Every correct answer is worth 10 points and 2 coins.',
-      'Touch gold coins with your line to collect them. Big coins are worth 5. Spend coins in the Shop on new sails and upgrades.',
+      'Touch gold coins with your line to collect them. Big coins are worth 5.',
+      'After each trip, sell your catch at the fish market. Bigger fish earn more coins.',
+      'Save coins for a stronger rod (to land bigger fish), a sailing canoe (to reach the reef), and a fibreglass boat with an outboard motor (to reach the open ocean). The motor needs fuel, which costs coins.',
     ],
     keysSolo: 'Keyboard: ← → to move, Space or ↓ to drop the line, P to pause.',
     keysVs: 'Two players on one screen: the left half of the screen steers the red canoe and the right half steers the blue canoe. Drag to move, tap to drop your line. Keyboard: red uses A D and S, blue uses ← → and ↓.',
@@ -392,6 +422,13 @@ const TEXT = {
     installAndroid: 'Android phone, Chrome: tap ⋮ → Add to Home screen → Install.',
     installIphone: 'iPhone or iPad, Safari: tap the Share button → Add to Home Screen.',
     installNote: 'Firefox cannot install apps on Windows, so please use Edge or Chrome. Open the game from teetamaribo7-cpu.github.io/game to install it.',
+    catchCol: 'Catch', rods: 'Fishing rods', boats: 'Boats', motors: 'Outboard motors', needItem: 'Needs {item}',
+    groundTitle: 'Where will you fish today?', groundGear: 'Your gear: {rod} (up to {max} kg)', fuel: 'Fuel: {n} coins',
+    needBoat: 'Needs a sailing canoe', needMotor: 'Needs a fibreglass boat and an outboard motor', needFuel: 'Not enough coins for fuel',
+    go2: 'Go fishing', tooHeavy: 'Snap! {kg} kg is too heavy (rod max {max} kg)',
+    marketTitle: 'Fish market', marketIntro: 'Sell your catch. Each fish is sold by weight: kg × price.',
+    sell: 'Sell catch', sold: 'Sold! +{n} coins', fuelLine: 'Fuel for the outboard motor', total: 'You earn', nothingToSell: 'No fish to sell this time.',
+    marketTip: 'Tip: save your coins in the Shop for a stronger rod, a boat or an outboard motor to catch bigger fish.',
     wallet: 'Your coins', shopBtn: 'Shop', shopTitle: 'Shop', sails: 'Canoe sails', upgrades: 'Upgrades',
     shopNote: 'Coins are only for this game and no real money is used. Collect coins by touching them with your fishing line, answering quiz questions and discovering new sea creatures.',
     using: 'Using', use: 'Use', owned: 'Owned', need: 'Need {n} more',
@@ -435,9 +472,9 @@ function applyLang() {
   const list = $('howList'); list.textContent = '';
   for (const line of t('how')) { const li = document.createElement('li'); li.textContent = line; list.appendChild(li); }
   const sp = $('speciesList'); sp.textContent = '';
-  for (const id of ['baneawa', 'ati', 'onauti', 'bakoa', 'on', 'plastic']) {
+  for (const id of [...CATCHABLE, 'bakoa', 'on', 'plastic']) {
     const s = SPECIES[id], d = document.createElement('div'), b = document.createElement('b'), n = document.createElement('span');
-    b.textContent = s.trash ? t('plastic') : 'te ' + id;
+    b.textContent = s.trash ? t('plastic') : (BOOK[id] ? BOOK[id].name : 'te ' + id);
     n.textContent = s.hazard ? (s.hazard === 'shark' ? t('sharkName') : t('turtleName')) + ' · ' + (s.hazard === 'shark' ? '✕' : '−5')
       : s.trash ? '+3' : `${s.en} · ${s.kg[0]}–${s.kg[1]} kg`;
     d.append(b, n); sp.appendChild(d);
@@ -503,7 +540,7 @@ drawMute();
 const SPECIES = {
   baneawa: { en: 'Milkfish', kind: 'fish', kg: [0.8, 3], base: 2, perKg: 3, len: 25, h: 0.3,
     back: '#5e7d6e', side: '#b9c7c6', belly: '#f2f5f4', fin: '#8aa096', speed: 38, depth: [0.1, 0.5], weight: 5, school: true },
-  ati: { en: 'Skipjack tuna', kind: 'fish', kg: [2, 8], base: 6, perKg: 3, len: 30, h: 0.38,
+  ati: { en: 'Skipjack tuna', kind: 'fish', kg: [2, 10], base: 6, perKg: 3, len: 30, h: 0.38,
     back: '#1a2654', side: '#5f7db3', belly: '#e6ebf3', fin: '#24336b', speed: 95, depth: [0.35, 0.82], weight: 3, stripes: true },
   onauti: { en: 'Flying fish', kind: 'fish', kg: [0.2, 0.5], base: 10, perKg: 6, len: 18, h: 0.27,
     back: '#1b5a9e', side: '#86bfe8', belly: '#f0f8ff', fin: '#a9d6f5', speed: 125, depth: [0.04, 0.22], weight: 2, wings: true },
@@ -511,11 +548,30 @@ const SPECIES = {
     speed: 62, depth: [0.3, 0.9], hazard: 'shark' },
   on: { en: 'Turtle', kind: 'turtle', len: 30, speed: 32, depth: [0.15, 0.7], hazard: 'turtle' },
   plastic: { en: 'Plastic', kind: 'trash', len: 13, speed: 16, depth: [0.03, 0.85], trash: true },
+  ikari: { en: 'Bonefish', kind: 'fish', kg: [1, 6], base: 4, perKg: 3, len: 24, h: 0.27,
+    back: '#7f9aa6', side: '#c9d6dc', belly: '#f3f7f8', fin: '#93a9b2', speed: 70, depth: [0.55, 0.92], lines: true },
+  gt: { en: 'Giant trevally', kind: 'fish', kg: [5, 35], base: 8, perKg: 2, len: 40, h: 0.46,
+    back: '#4a5560', side: '#a8b3ba', belly: '#e3e8eb', fin: '#2b3238', speed: 80, depth: [0.4, 0.9] },
+  yellowfin: { en: 'Yellowfin tuna', kind: 'fish', kg: [12, 60], base: 10, perKg: 2, len: 46, h: 0.36,
+    back: '#152a5c', side: '#6f8fbf', belly: '#eef2f7', fin: '#ffcf2e', speed: 105, depth: [0.3, 0.85], yellow: true },
+  mahi: { en: 'Mahi-mahi', kind: 'fish', kg: [4, 20], base: 8, perKg: 3, len: 36, h: 0.36,
+    back: '#1f8a6a', side: '#d9c93a', belly: '#f4ea9a', fin: '#2f7fd0', speed: 95, depth: [0.05, 0.4], spots: true },
 };
-const CATCHABLE = ['baneawa', 'ati', 'onauti'];
+const CATCHABLE = ['baneawa', 'ati', 'onauti', 'ikari', 'gt', 'yellowfin', 'mahi'];
+// Market prices in coins per kg.
+const PRICE = { baneawa: 2, ati: 3, onauti: 8, ikari: 3, gt: 2, yellowfin: 4, mahi: 3 };
+const fishName = id => id === 'plastic' ? t('plastic') : (BOOK[id] ? BOOK[id].name : 'te ' + id);
+
+// Fishing grounds: better boats reach deeper water with bigger fish.
+const GROUNDS = {
+  lagoon: { name: 'Lagoon', desc: 'Calm water inside the atoll. Milkfish, flying fish, small tuna.', pool: { baneawa: 5, ati: 2, onauti: 2, ikari: 1 } },
+  reef: { name: 'Reef edge', desc: 'Where the reef drops away. Bonefish and big trevally.', pool: { ikari: 4, gt: 2, baneawa: 2, onauti: 1, ati: 1 } },
+  ocean: { name: 'Open ocean', desc: 'Deep blue water. Big tuna and mahi-mahi.', pool: { ati: 4, yellowfin: 2, mahi: 2, onauti: 2 } },
+};
+let ground = 'lagoon';
 
 // Fish Book: a card for each creature, unlocked the first time you meet it.
-const BOOK_ORDER = ['baneawa', 'ati', 'onauti', 'bakoa', 'on', 'eitei', 'plastic'];
+const BOOK_ORDER = ['baneawa', 'ati', 'onauti', 'ikari', 'gt', 'yellowfin', 'mahi', 'bakoa', 'on', 'eitei', 'plastic'];
 const BOOK = {
   baneawa: { name: 'te baneawa', en: 'Milkfish', facts: [
     'Milkfish live in lagoons and eat algae (tiny sea plants) and plankton.',
@@ -541,6 +597,22 @@ const BOOK = {
     'The frigatebird is on the flag of Kiribati.',
     'Its feathers are not waterproof, so it cannot land on the sea. It can stay in the air for days or even weeks.',
     'Males puff up a bright red throat pouch to attract a partner.'] },
+  ikari: { name: 'te ikari', en: 'Bonefish', facts: [
+    'Bonefish feed on the sandy flats, digging for crabs, shrimps and shellfish.',
+    'They are very fast and strong for their size, so fishers love to catch them.',
+    'Kiritimati (Christmas Island) is famous around the world for bonefish fishing.'] },
+  gt: { name: 'Giant trevally', en: 'Reef hunter', facts: [
+    'Giant trevally hunt along the reef edge and can weigh more than 40 kg.',
+    'They sometimes hunt in groups and chase small fish to the surface.',
+    'You need a strong rod to land one!'] },
+  yellowfin: { name: 'Yellowfin tuna', en: 'Ocean traveller', facts: [
+    'Yellowfin tuna have long yellow fins and a yellow stripe along their side.',
+    'They swim across whole oceans and can weigh more than 100 kg.',
+    'Like all tuna, they are very valuable. Kiribati waters are some of the best tuna grounds in the world.'] },
+  mahi: { name: 'Mahi-mahi', en: 'Dolphinfish', facts: [
+    'Mahi-mahi are bright green, blue and gold. Their colours fade quickly after they leave the water.',
+    'They like to swim under floating logs and seaweed in the open ocean.',
+    'They grow very fast: up to a metre long in their first year.'] },
   plastic: { name: 'Plastic rubbish', en: 'Not a living thing', facts: [
     'A plastic bottle can take hundreds of years to break down in the sea.',
     'Plastic hurts fish, turtles and seabirds that eat it or get caught in it.',
@@ -588,12 +660,26 @@ const SHOP = [
   { id: 'sunset', type: 'sail', name: 'Sunset', desc: 'Orange, pink and purple', price: 40, sw: '#ff7a3d' },
   { id: 'flag', type: 'sail', name: 'Kiribati flag', desc: 'Red sky, gold sun and frigatebird, blue and white waves', price: 60, sw: '#d7263d' },
   { id: 'gold', type: 'sail', name: 'Golden', desc: 'For champion fishers', price: 100, sw: '#ffc23d' },
+  { id: 'rod1', type: 'rod', name: 'Bamboo rod', desc: 'Lands fish up to 12 kg', price: 40, max: 12 },
+  { id: 'rod2', type: 'rod', name: 'Fibreglass rod', desc: 'Lands fish up to 30 kg', price: 150, max: 30 },
+  { id: 'rod3', type: 'rod', name: 'Big-game reel', desc: 'Lands fish up to 80 kg', price: 400, max: 80 },
+  { id: 'sailboat', type: 'boat', name: 'Sailing canoe', desc: 'Faster, and sails out to the reef edge', price: 120 },
+  { id: 'fibre', type: 'boat', name: 'Fibreglass boat', desc: 'Strong boat for the open ocean. Needs an outboard motor.', price: 300 },
+  { id: 'motor15', type: 'motor', name: '15 hp outboard', desc: 'Reach the open ocean. Fuel: 6 coins a trip.', price: 200, req: 'fibre', fuel: 6, speed: 1.6 },
+  { id: 'motor40', type: 'motor', name: '40 hp outboard', desc: 'Much faster, but uses more fuel: 10 coins a trip.', price: 450, req: 'fibre', fuel: 10, speed: 2.1 },
   { id: 'hook4', type: 'upgrade', name: 'Extra hook', desc: 'Start every round with 4 hooks instead of 3', price: 80 },
   { id: 'reel', type: 'upgrade', name: 'Fast reel', desc: 'Reel in fish 30% faster', price: 120 },
 ];
 const hooksMax = () => owned.hook4 ? 4 : 3;
+const rodMax = () => owned.rod3 ? 80 : owned.rod2 ? 30 : owned.rod1 ? 12 : 5;
+const rodName = () => owned.rod3 ? 'Big-game reel' : owned.rod2 ? 'Fibreglass rod' : owned.rod1 ? 'Bamboo rod' : 'Hand line';
+const boatType = () => owned.fibre ? 'fibre' : owned.sailboat ? 'sail' : 'paddle';
+const motor = () => owned.motor40 ? SHOP.find(i => i.id === 'motor40') : owned.motor15 ? SHOP.find(i => i.id === 'motor15') : null;
+const speedMul = () => boatType() === 'fibre' ? (motor() ? motor().speed : 0.9) : boatType() === 'sail' ? 1.3 : 1;
+const fuelCost = g => g === 'ocean' && motor() ? motor().fuel : 0;
+const canReach = g => g === 'lagoon' || (g === 'reef' && boatType() !== 'paddle') || (g === 'ocean' && boatType() === 'fibre' && !!motor());
 function saveWallet() { store.set('tewa-coins', wallet); store.set('tewa-owned', JSON.stringify(owned)); store.set('tewa-sail', equipped); showWallet(); }
-function showWallet() { for (const id of ['walletMenu', 'walletShop']) { const el = document.getElementById(id); if (el) el.textContent = wallet; } }
+function showWallet() { for (const id of ['walletMenu', 'walletShop', 'walletGround']) { const el = document.getElementById(id); if (el) el.textContent = wallet; } }
 function addCoins(n, p) { wallet += n; sessionCoins += n; if (p) p.coins = (p.coins || 0) + n; saveWallet(); }
 const MODE_TIME = { solo: 90, versus: 90, turns: 60 };
 
@@ -638,7 +724,7 @@ function buildWorld() {
 window.addEventListener('resize', resize);
 
 const waveY = (x, tm) => SEA + Math.sin(x * 0.018 / U + tm * 1.3) * 3 * U + Math.sin(x * 0.047 / U - tm * 2.2) * 1.4 * U;
-const groundY = x => H - (20 * U + Math.sin(x * 0.009 / U) * 9 * U + Math.sin(x * 0.031 / U + 1) * 4 * U);
+const groundY = x => H - ((ground === 'reef' ? 60 : 20) * U + Math.sin(x * 0.009 / U) * (ground === 'reef' ? 22 : 9) * U + Math.sin(x * 0.031 / U + 1) * 4 * U);
 const boatHalf = () => 60 * U;
 
 // ============ Colour helpers ============
@@ -648,6 +734,12 @@ function mix(a, b, k) { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i)
 function mixA(a, b, k, al) { const A = hex(a), B = hex(b); return `rgba(${A.map((v, i) => Math.round(v + (B[i] - v) * k))},${al})`; }
 function ramp(stops, k) { const n = stops.length - 1, i = Math.min(n - 1, Math.floor(k * n)); return mix(stops[i], stops[i + 1], k * n - i); }
 function rampA(stops, k, al) { const n = stops.length - 1, i = Math.min(n - 1, Math.floor(k * n)); return mixA(stops[i], stops[i + 1], k * n - i, al); }
+const PAL_SEA = {
+  lagoon: { seaTop: ['#23adc6', '#1c9dbb', '#1b6788'], seaMid: ['#0f6f93', '#0d6589', '#0b4666'], seaDeep: ['#063f5c', '#053853', '#031d33'] },
+  reef: { seaTop: ['#2fc6c9', '#27b6be', '#1d7690'], seaMid: ['#15889c', '#127d93', '#0c4f6a'], seaDeep: ['#0a5a72', '#084f66', '#042638'] },
+  ocean: { seaTop: ['#1b74b8', '#1867a8', '#173f78'], seaMid: ['#0c3f7a', '#0a376d', '#08254f'], seaDeep: ['#03163a', '#021232', '#010a1f'] },
+};
+function applyGround() { Object.assign(PAL, PAL_SEA[ground]); }
 const PAL = {
   skyTop: ['#3d8fd9', '#2f7fcf', '#2a3f7e'], skyLow: ['#c7ecfb', '#b8e3f8', '#ff9a5c'],
   seaTop: ['#23adc6', '#1c9dbb', '#1b6788'], seaMid: ['#0f6f93', '#0d6589', '#0b4666'], seaDeep: ['#063f5c', '#053853', '#031d33'],
@@ -661,7 +753,7 @@ let roster = [];          // pass & play players across turns
 let turnIndex = 0;
 
 function makePlayer(name, color, x) {
-  return { name, color, score: 0, kg: 0, count: 0, hooks: hooksMax(), maxHooks: hooksMax(), coins: 0, sail: 'classic', caught: {},
+  return { name, color, score: 0, kg: 0, count: 0, hooks: hooksMax(), maxHooks: hooksMax(), coins: 0, sail: 'classic', caught: {}, kgBy: {}, boatType: boatType(), motor: motor(),
     boat: { x, vx: 0, target: null }, line: { state: 'idle', y: 0, fish: null, reelTick: 0 },
     keys: { left: false, right: false }, bend: 0 };
 }
@@ -692,14 +784,16 @@ function collectCoins(p, hx, hy) {
   }
 }
 function pickSpecies() {
-  const r = Math.random() * 10;
-  return r < 5 ? 'baneawa' : r < 8 ? 'ati' : 'onauti';
+  const pool = GROUNDS[ground].pool, total = Object.values(pool).reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (const id in pool) { if ((r -= pool[id]) < 0) return id; }
+  return 'baneawa';
 }
 function spawnFish(id, xFrac) {
   const sp = SPECIES[id], dir = Math.random() < 0.5 ? 1 : -1;
   const ramp = 1 + (G.t / G.time) * 0.35;
   const n = sp.school ? 3 + Math.floor(Math.random() * 3) : 1;
-  const d0 = rand(sp.depth[0], sp.depth[1]), speed = sp.speed * rand(0.85, 1.15) * ramp;
+  const d0 = Math.min(rand(sp.depth[0], sp.depth[1]), ground === 'reef' ? 0.74 : 0.92), speed = sp.speed * rand(0.85, 1.15) * ramp;
   for (let i = 0; i < n; i++) {
     const kg = sp.kg ? +rand(sp.kg[0], sp.kg[1]).toFixed(1) : 0;
     const norm = sp.kg ? (kg - sp.kg[0]) / (sp.kg[1] - sp.kg[0]) : 0.5;
@@ -796,7 +890,7 @@ function update(dt) {
 
 function updatePlayer(p, dt) {
   const b = p.boat, L = p.line;
-  const maxV = (240 + W * 0.18) * U / Math.max(U, 0.9), slow = L.state === 'idle' ? 1 : 0.3;
+  const maxV = (240 + W * 0.18) * U / Math.max(U, 0.9) * speedMul(), slow = L.state === 'idle' ? 1 : 0.3;
   const ax = (p.keys.right ? 1 : 0) - (p.keys.left ? 1 : 0);
   let want;
   if (ax) want = ax * maxV * slow;
@@ -841,8 +935,8 @@ function land(p) {
   } else {
     const pts = Math.round(f.sp.base + f.kg * f.sp.perKg);
     p.score += pts; p.kg += f.kg; p.count++;
-    p.caught[f.id] = (p.caught[f.id] || 0) + 1; sfx.land();
-    popup(p.boat.x, SEA - 95 * U, `+${pts}  te ${f.id} · ${f.kg} kg`, '#ffd76a');
+    p.caught[f.id] = (p.caught[f.id] || 0) + 1; p.kgBy[f.id] = (p.kgBy[f.id] || 0) + f.kg; sfx.land();
+    popup(p.boat.x, SEA - 95 * U, `+${pts}  ${fishName(f.id)} · ${f.kg} kg`, '#ffd76a');
     discover(f.id);
   }
 }
@@ -895,6 +989,7 @@ function checkHook(p, f) {
     return;
   }
   if (!hits(f, hx, hy)) return;
+  if (f.flee > 0 && f.sp.kind === 'fish') return;
   if (f.sp.kind === 'shark') {
     p.hooks--; L.state = 'up'; L.y = Math.min(L.y, 30 * U); sfx.cut();
     splash(hx, hy, 8, 0.3); popup(p.boat.x, SEA - 95 * U, t('lineCut'), '#ff9a8a'); discover('bakoa');
@@ -903,6 +998,11 @@ function checkHook(p, f) {
     p.score = Math.max(0, p.score - 5); L.state = 'up'; f.flee = 2.5; sfx.turtle();
     popup(p.boat.x, SEA - 95 * U, t('turtle'), '#9fe3ff'); discover('on');
   } else {
+    if (f.kg > rodMax()) {
+      L.state = 'up'; f.flee = 2; sfx.cut(); splash(hx, hy, 8, 0.4);
+      popup(p.boat.x, SEA - 95 * U, t('tooHeavy', { kg: f.kg, max: rodMax() }), '#ffb38a');
+      return;
+    }
     f.hooked = true; L.fish = f; L.state = 'up'; sfx.bite();
   }
 }
@@ -942,8 +1042,8 @@ function drawSky(k, tm) {
   G_sun.x = sx; G_sun.y = sy; G_sun.c = sc;
 
   for (const c of world.clouds) drawCloud(c.x, c.y, c.s, k);
-  for (const is of world.isles) drawFarIsle(is, k);
-  drawNearIsle(world.near, k, tm);
+  if (ground !== 'ocean' || !G) for (const is of world.isles) drawFarIsle(is, k);
+  if (ground === 'lagoon' || !G) drawNearIsle(world.near, k, tm);
 }
 const G_sun = { x: 0, y: 0, c: '#fff' };
 
@@ -1173,6 +1273,24 @@ function drawFishShape(sp, r, wag) {
     for (let i = 0; i < 4; i++) { const yy = h * (0.12 + i * 0.2); ctx.beginPath(); ctx.moveTo(-r * 0.75, yy * 0.7); ctx.quadraticCurveTo(0, yy + h * 0.1, r * 0.6, yy * 0.5); ctx.stroke(); }
     ctx.restore();
   }
+  if (sp.yellow) {
+    ctx.save(); ctx.clip();
+    ctx.fillStyle = 'rgba(255,207,46,.75)'; ctx.beginPath(); ctx.moveTo(r * 0.6, -h * 0.05); ctx.quadraticCurveTo(0, h * 0.05, -r * 0.8, -h * 0.02); ctx.quadraticCurveTo(0, -h * 0.18, r * 0.6, -h * 0.05); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = sp.fin; ctx.beginPath(); ctx.moveTo(-r * 0.15, -h * 0.9); ctx.quadraticCurveTo(-r * 0.4, -h * 2.4, -r * 0.55, -h * 2.6); ctx.lineTo(-r * 0.45, -h * 0.7); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-r * 0.15, h * 0.9); ctx.quadraticCurveTo(-r * 0.4, h * 2.2, -r * 0.55, h * 2.4); ctx.lineTo(-r * 0.45, h * 0.7); ctx.fill();
+    for (let i = 0; i < 5; i++) { const fx = -r * (0.5 + i * 0.06); ctx.beginPath(); ctx.moveTo(fx, -h * 0.5); ctx.lineTo(fx - r * 0.03, -h * 0.75); ctx.lineTo(fx - r * 0.06, -h * 0.45); ctx.fill(); }
+  }
+  if (sp.spots) {
+    ctx.save(); ctx.clip(); ctx.fillStyle = 'rgba(40,110,210,.7)';
+    for (let i = 0; i < 9; i++) { ctx.beginPath(); ctx.arc(r * (0.5 - i * 0.13), -h * 0.2 + (i % 3) * h * 0.25, Math.max(1, r * 0.035), 0, 7); ctx.fill(); }
+    ctx.restore();
+  }
+  if (sp.lines) {
+    ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(60,80,95,.3)'; ctx.lineWidth = Math.max(0.8, r * 0.025);
+    for (let i = 0; i < 5; i++) { const yy = -h * 0.55 + i * h * 0.22; ctx.beginPath(); ctx.moveTo(-r * 0.8, yy); ctx.lineTo(r * 0.7, yy * 0.8); ctx.stroke(); }
+    ctx.restore();
+  }
   // Shine along the back
   ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.lineWidth = Math.max(1, r * 0.04);
   ctx.beginPath(); ctx.moveTo(r * 0.65, -h * 0.35); ctx.quadraticCurveTo(0, -h * 0.55, -r * 0.7, -h * 0.12); ctx.stroke();
@@ -1272,9 +1390,7 @@ function rodTip(p, tm) {
 }
 function boatAngle(b, tm) { const s = (waveY(b.x + 30 * U, tm) - waveY(b.x - 30 * U, tm)) / (60 * U); return Math.atan(s) * 0.8 + clamp(b.vx * 0.0003, -0.06, 0.06); }
 
-function drawCanoe(p, tm, k, label) {
-  const b = p.boat, y = waveY(b.x, tm) - 3 * U, a = boatAngle(b, tm), u = U;
-  ctx.save(); ctx.translate(b.x, y); ctx.rotate(a);
+function drawWoodHull(k, u) {
   // Outrigger float (far side) and booms
   ctx.fillStyle = mix('#6e4a2a', '#4a3020', k);
   ctx.beginPath(); ctx.ellipse(-4 * u, -9 * u, 40 * u, 3.2 * u, 0, 0, 7); ctx.fill();
@@ -1295,6 +1411,8 @@ function drawCanoe(p, tm, k, label) {
   ctx.beginPath(); ctx.moveTo(-50 * u, -8 * u); ctx.quadraticCurveTo(0, -4 * u, 50 * u, -8 * u); ctx.stroke();
   ctx.strokeStyle = 'rgba(0,0,0,.25)';
   for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(i * 13 * u, -13 * u); ctx.lineTo(i * 13 * u, -2 * u); ctx.stroke(); }
+}
+function drawSailRig(p, k, u) {
   // Mast and pandanus sail
   ctx.strokeStyle = mix('#5a3d22', '#3b2716', k); ctx.lineWidth = 2.6 * u;
   ctx.beginPath(); ctx.moveTo(-8 * u, -14 * u); ctx.lineTo(-4 * u, -86 * u); ctx.stroke();
@@ -1310,6 +1428,45 @@ function drawCanoe(p, tm, k, label) {
   ctx.restore();
   ctx.strokeStyle = mix('#5a3d22', '#3b2716', k); ctx.lineWidth = 2 * u;
   ctx.beginPath(); ctx.moveTo(-3 * u, -84 * u); ctx.quadraticCurveTo(26 * u, -58 * u, 34 * u, -20 * u); ctx.lineTo(-7 * u, -20 * u); ctx.stroke();
+}
+function drawFibreHull(p, tm, k, u) {
+  // Outboard motor on the stern
+  const m = p.motor;
+  if (m) {
+    const big = m.id === 'motor40' ? 1.25 : 1;
+    ctx.fillStyle = '#2b2f36'; ctx.fillRect(-66 * u, -14 * u, 4 * u, 22 * u * big);
+    ctx.fillStyle = '#1d2026'; ctx.beginPath(); ctx.ellipse(-64 * u, 8 * u * big, 4 * u, 2.4 * u, 0, 0, 7); ctx.fill();
+    const mg = ctx.createLinearGradient(0, -34 * u * big, 0, -14 * u);
+    mg.addColorStop(0, '#3a3f48'); mg.addColorStop(1, '#16191e');
+    ctx.fillStyle = mg; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-74 * u, -32 * u * big, 18 * u * big, 20 * u * big, 5 * u) : ctx.rect(-74 * u, -32 * u * big, 18 * u * big, 20 * u * big); ctx.fill();
+    ctx.fillStyle = '#ffc23d'; ctx.fillRect(-72 * u, -26 * u * big, 12 * u * big, 2.5 * u);
+    if (Math.abs(p.boat.vx) > 30 * U && G) for (let i = 0; i < 2; i++) G.fx.push({ kind: 'drop', x: p.boat.x - 70 * U * Math.cos(0), y: waveY(p.boat.x - 70 * U, tm) - 2 * U, vx: -Math.sign(p.boat.vx) * rand(40, 120) * U, vy: -rand(40, 120) * U, life: rand(0.3, 0.5), s: rand(1, 2) * U });
+  }
+  // White fibreglass hull with a coloured stripe
+  const hg = ctx.createLinearGradient(0, -20 * u, 0, 8 * u);
+  hg.addColorStop(0, mix('#ffffff', '#f2d6c2', k)); hg.addColorStop(1, mix('#c9d3da', '#9a8a86', k));
+  ctx.fillStyle = hg;
+  ctx.beginPath();
+  ctx.moveTo(-62 * u, -20 * u); ctx.lineTo(-60 * u, 4 * u); ctx.lineTo(30 * u, 7 * u);
+  ctx.quadraticCurveTo(58 * u, 2 * u, 66 * u, -22 * u); ctx.lineTo(-62 * u, -20 * u); ctx.closePath(); ctx.fill();
+  const stripe = (SHOP.find(i => i.id === p.sail) || {}).sw;
+  ctx.fillStyle = p.sail && p.sail !== 'classic' ? stripe : p.color;
+  ctx.beginPath(); ctx.moveTo(-61 * u, -13 * u); ctx.lineTo(62 * u, -14 * u); ctx.lineTo(60 * u, -10 * u); ctx.lineTo(-61 * u, -9 * u); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(-62 * u, -22 * u, 128 * u, 3 * u);
+}
+
+function drawCanoe(p, tm, k, label) {
+  const b = p.boat, y = waveY(b.x, tm) - 3 * U, a = boatAngle(b, tm), u = U;
+  ctx.save(); ctx.translate(b.x, y); ctx.rotate(a);
+  const type = p.boatType || 'sail';
+  if (type === 'fibre') drawFibreHull(p, tm, k, u);
+  else drawWoodHull(k, u);
+  if (type === 'sail') drawSailRig(p, k, u);
+  if (type === 'paddle') {
+    ctx.strokeStyle = mix('#7a5533', '#51361f', k); ctx.lineWidth = 2.2 * u;
+    ctx.beginPath(); ctx.moveTo(-20 * u, -28 * u); ctx.lineTo(8 * u, -6 * u); ctx.stroke();
+    ctx.fillStyle = mix('#7a5533', '#51361f', k); ctx.beginPath(); ctx.ellipse(10 * u, -4 * u, 6 * u, 2.4 * u, 0.7, 0, 7); ctx.fill();
+  }
   // Fisher
   ctx.fillStyle = p.color; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(38 * u, -30 * u, 11 * u, 16 * u, 3 * u) : ctx.rect(38 * u, -30 * u, 11 * u, 16 * u); ctx.fill();
   ctx.fillStyle = mix('#8a5634', '#6a3f26', k); ctx.beginPath(); ctx.arc(43.5 * u, -35 * u, 5.2 * u, 0, 7); ctx.fill();
@@ -1404,11 +1561,16 @@ function drawFx() {
 function drawPopups() {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.font = `900 ${Math.round(15 * U + 3)}px Nunito, system-ui, sans-serif`;
+  const baseFont = Math.round(15 * U + 3);
   for (const p of G.popups) {
+    ctx.font = `900 ${baseFont}px Nunito, system-ui, sans-serif`;
+    const tw = ctx.measureText(p.text).width;
+    if (tw > W - 24) ctx.font = `900 ${Math.floor(baseFont * (W - 24) / tw)}px Nunito, system-ui, sans-serif`;
     ctx.globalAlpha = clamp(p.life, 0, 1);
     ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(3,20,32,.8)'; const py = Math.max(84, p.y);
-    ctx.strokeText(p.text, clamp(p.x, 110, W - 110), py);
-    ctx.fillStyle = p.color; ctx.fillText(p.text, clamp(p.x, 110, W - 110), py);
+    const hw = ctx.measureText(p.text).width / 2 + 8, px = hw * 2 > W ? W / 2 : clamp(p.x, hw, W - hw);
+    ctx.strokeText(p.text, px, py);
+    ctx.fillStyle = p.color; ctx.fillText(p.text, px, py);
   }
   ctx.globalAlpha = 1;
 }
@@ -1437,7 +1599,7 @@ function draw(tm) {
   if (G && G.terns.t <= 0) drawTerns(G.terns.x, SEA * 0.45, tm, U);
   if (!G) { drawFrigatebird((tm * 40 * U) % (W + 240) - 120, SEA * 0.3, tm, U); }
   drawWater(k, tm);
-  drawSeabed(k, tm);
+  if (ground !== 'ocean' || !G) drawSeabed(k, tm);
   if (G) for (const f of G.fish) drawCreature(f);
   drawFog(k);
   if (G) for (const c of G.coins) drawCoin(c, tm);
@@ -1453,7 +1615,7 @@ function draw(tm) {
   // Sunset glow over everything near the end of the day
   if (k > 0.7) { ctx.fillStyle = `rgba(255,120,60,${(k - 0.7) * 0.25})`; ctx.fillRect(0, 0, W, H); }
 }
-const menuBoat = { color: PLAYER_COLORS[0], boat: { x: 0, vx: 0 }, bend: 0, get sail() { return equipped; } };
+const menuBoat = { color: PLAYER_COLORS[0], boat: { x: 0, vx: 0 }, bend: 0, get sail() { return equipped; }, get boatType() { return boatType(); }, get motor() { return motor(); } };
 
 // ============ HUD ============
 const HOOK_SVG = '<svg viewBox="0 0 10 16"><path d="M5 1v9.5a3 3 0 1 1-3.4-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
@@ -1485,7 +1647,7 @@ function updateHud() {
 }
 
 // ============ Screens & flow ============
-const SCREENS = ['menu', 'how', 'setup', 'paused', 'turnEnd', 'results', 'quiz', 'card', 'book', 'shop', 'installHelp'];
+const SCREENS = ['menu', 'how', 'setup', 'paused', 'turnEnd', 'results', 'quiz', 'card', 'book', 'shop', 'installHelp', 'groundPick', 'market'];
 function show(id) { for (const s of SCREENS) $(s).hidden = s !== id; $('hud').hidden = !(id === null || id === 'paused') || !G; }
 
 function defaultName(i) { return mode === 'versus' ? [t('red'), t('blue')][i] : t('p', { n: i + 1 }); }
@@ -1520,13 +1682,44 @@ function readNames() {
 }
 
 function beginRound(players) {
-  newRound(players); buildHud(); state = 'countdown'; show(null);
+  const fuelPaid = fuelCost(ground);
+  newRound(players); G.fuelPaid = fuelPaid; buildHud(); state = 'countdown'; show(null);
   try { audio(); } catch (e) {}
 }
 function withSail(p) { p.sail = equipped; return p; }
-function startSolo() { mode = 'solo'; sessionCoins = 0; beginRound([withSail(makePlayer(t('solo'), PLAYER_COLORS[0], W * 0.4))]); }
-function startVersus(names) { sessionCoins = 0; beginRound(names.map((n, i) => makePlayer(n, PLAYER_COLORS[i], W * (0.28 + i * 0.44)))); }
-function startTurn() { const r = roster[turnIndex]; if (turnIndex === 0) sessionCoins = 0; beginRound([withSail(makePlayer(r.name, r.color, W * 0.4))]); }
+function startSolo() { mode = 'solo'; pickGround(() => { sessionCoins = 0; beginRound([withSail(makePlayer(t('solo'), PLAYER_COLORS[0], W * 0.4))]); }); }
+function startVersus(names) { pickGround(() => { sessionCoins = 0; beginRound(names.map((n, i) => makePlayer(n, PLAYER_COLORS[i], W * (0.28 + i * 0.44)))); }); }
+function startTurn() {
+  const r = roster[turnIndex];
+  const go = () => { if (turnIndex === 0) sessionCoins = 0; beginRound([withSail(makePlayer(r.name, r.color, W * 0.4))]); };
+  if (turnIndex === 0) pickGround(go);
+  else if (fuelCost(ground) > wallet) { ground = 'lagoon'; go(); }
+  else { payFuel(); go(); }
+}
+function payFuel() { const f = fuelCost(ground); if (f) { wallet -= f; saveWallet(); } }
+let groundCb = null;
+function pickGround(cb) {
+  groundCb = cb;
+  $('gearLine').textContent = t('groundGear', { rod: rodName(), max: rodMax() });
+  const box = $('groundList'); box.textContent = '';
+  for (const id of ['lagoon', 'reef', 'ocean']) {
+    const g = GROUNDS[id], b = document.createElement('button'), info = document.createElement('span'), nm = document.createElement('b'), ds = document.createElement('small'), tag = document.createElement('span');
+    b.className = 'item'; tag.className = 'tag'; nm.textContent = g.name; ds.textContent = g.desc; info.append(nm, ds);
+    const fuel = fuelCost(id), reach = canReach(id), afford = fuel <= wallet;
+    if (!reach) { tag.textContent = id === 'reef' ? t('needBoat') : t('needMotor'); b.classList.add('poor'); }
+    else if (!afford) { tag.textContent = t('needFuel'); b.classList.add('poor'); }
+    else if (fuel) { const ci = document.createElement('i'); ci.className = 'coin'; tag.append(ci, t('fuel', { n: fuel })); }
+    else tag.textContent = t('go2');
+    if (id === ground && reach && afford) b.classList.add('on');
+    b.append(info, tag);
+    b.onclick = () => {
+      if (!reach || !afford) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); tone(220, 0.2, 'sine', 0.08); return; }
+      ground = id; store.set('tewa-ground', id); payFuel(); applyGround(); groundCb && groundCb();
+    };
+    box.appendChild(b);
+  }
+  showWallet(); show('groundPick');
+}
 
 $('setupGo').onclick = () => {
   const names = readNames();
@@ -1541,7 +1734,7 @@ $('howBtn').onclick = () => show('how');
 
 function pause() { if (state !== 'play' && state !== 'countdown') return; G.prev = state; state = 'paused'; show('paused'); }
 function resume() { if (state !== 'paused') return; state = G.prev || 'play'; show(null); last = performance.now(); }
-function toMenu() { state = 'menu'; G = null; pointers.clear(); $('bestScore').textContent = best; showWallet(); show('menu'); }
+function toMenu() { state = 'menu'; G = null; ground = 'lagoon'; applyGround(); buildWorld(); pointers.clear(); $('bestScore').textContent = best; showWallet(); show('menu'); }
 $('pauseBtn').onclick = pause; $('resumeBtn').onclick = resume; $('quitBtn').onclick = toMenu; $('menuBtn').onclick = toMenu;
 $('againBtn').onclick = () => { if (mode === 'solo') startSolo(); else if (mode === 'versus') startVersus(G_lastNames); else { roster.forEach(r => { r.score = 0; r.kg = 0; r.count = 0; r.caught = {}; r.quiz = 0; }); turnIndex = 0; startTurn(); } };
 $('teGo').onclick = () => startTurn();
@@ -1550,10 +1743,10 @@ let G_lastNames = [];
 
 function catchChips(box, caught) {
   box.textContent = '';
-  for (const id of ['ati', 'baneawa', 'onauti', 'plastic']) {
+  for (const id of [...CATCHABLE, 'plastic']) {
     if (!caught[id]) continue;
     const s = document.createElement('span');
-    s.textContent = `${id === 'plastic' ? t('plastic') : 'te ' + id} × ${caught[id]}`; box.appendChild(s);
+    s.textContent = `${fishName(id)} × ${caught[id]}`; box.appendChild(s);
   }
 }
 function randomFact() { const f = FACTS[lang] || FACTS.en; return f[Math.floor(Math.random() * f.length)]; }
@@ -1562,7 +1755,7 @@ function endRound(reason) {
   state = 'over'; sfx.end(); pointers.clear();
   for (const p of G.players) p.quiz = 0;
   const n = mode === 'versus' ? 4 : 3;
-  setTimeout(() => runQuiz(G.players, n, false, () => finishRound(reason)), 700);
+  setTimeout(() => runQuiz(G.players, n, false, () => openMarket(G.players, () => finishRound(reason))), 700);
 }
 
 function finishRound(reason) {
@@ -1700,6 +1893,7 @@ function mathQuestion() {
     () => { const a = ri(2, 7), b = ri(1, 6); return { q: `You catch ${a} milkfish and ${b} skipjack. How many fish is that?`, n: a + b, why: `${a} + ${b} = ${a + b}` }; },
     () => { const a = ri(1, 2); return { q: `You have 3 hooks. A shark cuts ${a} of your lines. How many hooks are left?`, n: 3 - a, why: `3 − ${a} = ${3 - a}` }; },
     () => { const a = ri(7, 12), b = ri(2, 6); return { q: `There are ${a} fish in a school. ${b} swim away. How many are left?`, n: a - b, why: `${a} − ${b} = ${a - b}` }; },
+    () => { const kg = ri(2, 5); return { q: `Milkfish sells for 2 coins per kg. How many coins for a ${kg} kg milkfish?`, n: kg * 2, why: `${kg} × 2 = ${kg * 2} coins` }; },
     () => { const a = ri(2, 5); return { q: `Each plastic bottle you clean up gives 3 points. You clean up ${a} bottles. How many points is that?`, n: a * 3, why: `${a} × 3 = ${a * 3}` }; },
   ];
   const senior = [
@@ -1708,6 +1902,8 @@ function mathQuestion() {
     () => { const a = ri(11, 29) / 10, b = ri(11, 29) / 10, s = Math.round((a + b) * 10) / 10; return { q: `One milkfish weighs ${a} kg and another weighs ${b} kg. What is their total weight in kg?`, n: s, dec: true, why: `${a} + ${b} = ${num(s)} kg` }; },
     () => { const sc = ri(20, 60), tt = ri(1, 3); return { q: `Your score is ${sc}. You hook ${tt} turtle${tt > 1 ? 's' : ''} and lose 5 points each time. What is your score now?`, n: sc - 5 * tt, why: `${sc} − 5 × ${tt} = ${sc - 5 * tt}` }; },
     () => ({ q: 'A round of Te Wa lasts 90 seconds. How many minutes is that?', n: 1.5, dec: true, why: '90 ÷ 60 = 1.5 minutes' }),
+    () => { const kg = ri(3, 9), pr = ri(2, 4); return { q: `At the market, fish sells for ${pr} coins per kg. How many coins do you get for ${kg} kg?`, n: kg * pr, why: `${kg} × ${pr} = ${kg * pr} coins` }; },
+    () => { const sale = ri(30, 80), fuel = pick([6, 10]); return { q: `You sell your catch for ${sale} coins. Fuel for the outboard motor cost ${fuel} coins. What is your profit?`, n: sale - fuel, why: `${sale} − ${fuel} = ${sale - fuel} coins profit` }; },
   ];
   const m = pick(level === 'senior' ? senior : junior)();
   const step = m.dec ? 0.5 : m.n >= 20 ? 3 : 1;
@@ -1766,6 +1962,35 @@ function runQuiz(players, n, practice, done) {
 }
 $('practiceBtn').onclick = () => runQuiz([{ name: '', color: PLAYER_COLORS[0] }], 5, true, openBook);
 
+// ============ Fish market ============
+function openMarket(players, done) {
+  const tb = $('marketTable').querySelector('tbody'); tb.textContent = '';
+  let total = 0;
+  const addRow = (cells, cls) => { const tr = document.createElement('tr'); if (cls) tr.className = cls; for (const c of cells) { const td = document.createElement('td'); td.textContent = c; tr.append(td); } tb.appendChild(tr); };
+  for (const p of players) {
+    for (const id of CATCHABLE) {
+      const kg = Math.round((p.kgBy[id] || 0) * 10) / 10; if (!kg) continue;
+      const coins = Math.round(kg * PRICE[id]); total += coins;
+      addRow([(players.length > 1 ? p.name + ': ' : '') + fishName(id) + ' × ' + p.caught[id], kg, PRICE[id], coins]);
+    }
+  }
+  if (!tb.children.length) addRow([t('nothingToSell'), '', '', '0']);
+  const fuel = G && G.fuelPaid || 0;
+  if (fuel) addRow([t('fuelLine') + ' (' + t('fuel', { n: fuel }).toLowerCase() + ')', '', '', '−' + fuel]);
+  $('marketWho').textContent = GROUNDS[ground].name + (players.length === 1 && mode !== 'solo' ? ' · ' + players[0].name : '');
+  $('marketTotal').textContent = total;
+  const btn = $('sellBtn'); btn.textContent = t('sell'); btn.disabled = false;
+  btn.onclick = () => {
+    btn.disabled = true;
+    const each = players.length ? Math.floor(total / players.length) : 0;
+    if (total) { addCoins(total); for (const p of players) p.coins = (p.coins || 0) + each; }
+    btn.textContent = t('sold', { n: total });
+    if (total) { [0, 0.08, 0.16, 0.24].forEach(d => tone(1320 + d * 2000, 0.08, 'square', 0.04, 0, d)); }
+    setTimeout(done, total ? 900 : 200);
+  };
+  show('market');
+}
+
 // ============ Shop ============
 let shopOpen = false;
 function openShop() {
@@ -1773,7 +1998,7 @@ function openShop() {
 }
 function renderShop() {
   showWallet();
-  for (const [boxId, type] of [['sailList', 'sail'], ['upList', 'upgrade']]) {
+  for (const [boxId, type] of [['rodList', 'rod'], ['boatList', 'boat'], ['motorList', 'motor'], ['upList', 'upgrade'], ['sailList', 'sail']]) {
     const box = $(boxId); box.textContent = '';
     for (const it of SHOP.filter(x => x.type === type)) {
       const b = document.createElement('button'), info = document.createElement('span'), nm = document.createElement('b'), ds = document.createElement('small'), tag = document.createElement('span');
@@ -1783,10 +2008,12 @@ function renderShop() {
       const have = !!owned[it.id];
       if (type === 'sail' && equipped === it.id) { b.classList.add('on'); tag.textContent = t('using'); }
       else if (have) tag.textContent = type === 'sail' ? t('use') : t('owned');
+      else if (it.req && !owned[it.req]) { tag.textContent = t('needItem', { item: SHOP.find(x => x.id === it.req).name }); b.classList.add('poor'); }
       else { const ci = document.createElement('i'); ci.className = 'coin'; tag.append(ci, String(it.price)); if (wallet < it.price) b.classList.add('poor'); }
       b.append(info, tag);
       b.onclick = () => {
         if (have) { if (type === 'sail') { equipped = it.id; saveWallet(); renderShop(); } return; }
+        if (it.req && !owned[it.req]) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); tone(220, 0.2, 'sine', 0.08); return; }
         if (wallet < it.price) {
           tag.textContent = t('need', { n: it.price - wallet }); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
           tone(220, 0.2, 'sine', 0.08); return;
@@ -1807,7 +2034,7 @@ function paintShopPreview(tm) {
   g.addColorStop(0, '#6fb8e8'); g.addColorStop(0.72, '#cdeefb'); g.addColorStop(0.72, '#23adc6'); g.addColorStop(1, '#0d6589');
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
   U = Math.min(1.2, h / 120); SEA = h * 0.78;
-  drawCanoe({ color: PLAYER_COLORS[0], sail: equipped, boat: { x: w / 2 - 20 * U, vx: 0 }, bend: 0 }, tm, 0.2, false);
+  drawCanoe({ color: PLAYER_COLORS[0], sail: equipped, boatType: boatType(), motor: motor(), boat: { x: w / 2 - 20 * U, vx: 0 }, bend: 0 }, tm, 0.2, false);
   ctx = main; U = mU; SEA = mSEA;
 }
 $('shopBtn').onclick = openShop;
