@@ -197,6 +197,7 @@
       <button class="btn" id="bookBtn" data-t="bookBtn"></button>
       <button class="btn" id="howBtn" data-t="howBtn"></button>
     </div>
+    <button class="btn primary" id="installBtn" hidden data-t="install"></button>
     <div class="row">
       <div class="seg" role="group" aria-label="Age level">
         <button data-level="junior" data-t="junior"></button><button data-level="senior" data-t="senior"></button>
@@ -298,6 +299,21 @@
   </div>
 </div>
 
+<div class="screen" id="installHelp" hidden>
+  <div class="panel">
+    <h2 data-t="installTitle"></h2>
+    <p class="greet" data-t="installIntro"></p>
+    <ol class="how">
+      <li data-t="installEdge"></li>
+      <li data-t="installChrome"></li>
+      <li data-t="installAndroid"></li>
+      <li data-t="installIphone"></li>
+    </ol>
+    <p class="keys" style="margin:0" data-t="installNote"></p>
+    <button class="btn" data-back data-t="back"></button>
+  </div>
+</div>
+
 <div class="screen" id="results" hidden>
   <div class="panel">
     <h2 id="resTitle"></h2>
@@ -369,6 +385,13 @@ const TEXT = {
     right: 'Correct! +10 points · +2 coins', rightPractice: 'Correct!', wrong: 'Not quite. The answer is: {a}',
     next: 'Next question', finish: 'See results', practiceDone: 'You got {c} out of {n}!', backToBook: 'Back to Fish Book',
     answerFor: '{name} answers',
+    install: 'Install app', installTitle: 'Install Te Wa',
+    installIntro: 'Install Te Wa to get its own icon. It opens in its own window and works without internet.',
+    installEdge: 'Windows, Microsoft Edge: click ⋯ (top right) → Apps → Install this site as an app.',
+    installChrome: 'Windows, Google Chrome: click ⋮ (top right) → Cast, save and share → Install page as app.',
+    installAndroid: 'Android phone, Chrome: tap ⋮ → Add to Home screen → Install.',
+    installIphone: 'iPhone or iPad, Safari: tap the Share button → Add to Home Screen.',
+    installNote: 'Firefox cannot install apps on Windows, so please use Edge or Chrome. Open the game from teetamaribo7-cpu.github.io/game to install it.',
     wallet: 'Your coins', shopBtn: 'Shop', shopTitle: 'Shop', sails: 'Canoe sails', upgrades: 'Upgrades',
     shopNote: 'Coins are only for this game and no real money is used. Collect coins by touching them with your fishing line, answering quiz questions and discovering new sea creatures.',
     using: 'Using', use: 'Use', owned: 'Owned', need: 'Need {n} more',
@@ -1462,7 +1485,7 @@ function updateHud() {
 }
 
 // ============ Screens & flow ============
-const SCREENS = ['menu', 'how', 'setup', 'paused', 'turnEnd', 'results', 'quiz', 'card', 'book', 'shop'];
+const SCREENS = ['menu', 'how', 'setup', 'paused', 'turnEnd', 'results', 'quiz', 'card', 'book', 'shop', 'installHelp'];
 function show(id) { for (const s of SCREENS) $(s).hidden = s !== id; $('hud').hidden = !(id === null || id === 'paused') || !G; }
 
 function defaultName(i) { return mode === 'versus' ? [t('red'), t('blue')][i] : t('p', { n: i + 1 }); }
@@ -1804,6 +1827,21 @@ function loop(now) {
 
 resize(); applyLang(); applyLevel(); showWallet(); $('bestScore').textContent = best;
 requestAnimationFrame(loop);
+
+// Install button: uses the browser's install prompt when it offers one, otherwise shows step-by-step help.
+let installEvt = null;
+const isInstalled = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const inFrame = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if (!isInstalled()) $('installBtn').hidden = false; });
+window.addEventListener('appinstalled', () => { installEvt = null; $('installBtn').hidden = true; });
+if (!isInstalled() && !inFrame && location.protocol.startsWith('http')) $('installBtn').hidden = false;
+$('installBtn').onclick = async () => {
+  if (installEvt) {
+    installEvt.prompt();
+    try { const r = await installEvt.userChoice; if (r.outcome === 'accepted') $('installBtn').hidden = true; } catch (e) {}
+    installEvt = null;
+  } else show('installHelp');
+};
 
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('sw.js').catch(() => {});

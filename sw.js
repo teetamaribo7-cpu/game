@@ -1,5 +1,5 @@
 // Offline cache: the game works with no internet after the first visit.
-const CACHE = 'tewa-v5';
+const CACHE = 'tewa-v6';
 const FILES = ['./', './index.html', './manifest.json', './icon.svg', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -14,14 +14,17 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Cache first; anything fetched successfully (including the web fonts) is kept for offline play.
+// Pages: try the network first so updates show up, fall back to the cache when offline.
+// Other files (icons, fonts): cache first, and keep anything fetched for offline play.
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-    if (res.ok || res.type === 'opaque') {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, copy));
-    }
+  const save = res => {
+    if (res.ok || res.type === 'opaque') { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
     return res;
-  })));
+  };
+  if (e.request.mode === 'navigate' || e.request.destination === 'document' || e.request.url.endsWith('manifest.json')) {
+    e.respondWith(fetch(e.request).then(save).catch(() => caches.match(e.request).then(hit => hit || caches.match('./index.html'))));
+    return;
+  }
+  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(save)));
 });
