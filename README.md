@@ -88,6 +88,12 @@ These are game coins only. There is no real money.
    Chrome: click the **Install** icon in the address bar, or go to **⋮ → Cast, save and share → Install page as app**.
 3. Te Wa gets a Start menu entry and a desktop shortcut, opens in its own window and works offline.
 
+## Student app downloads
+The **[apps page](https://teetamaribo7-cpu.github.io/game/apps/)** lets students download Android study apps:
+- **Year 13 Chemistry** v1.1 – `apps/Y13_Chemistry_v1.1.apk` (297 KB)
+
+To add a new version, put the APK in `apps/` and update the link in `apps/index.html`.
+
 ## Run it
 Put the files on any web host. GitHub Pages works: go to Settings → Pages → Deploy from a branch.
 To test locally:
