@@ -18,6 +18,7 @@ self.addEventListener('activate', e => {
 // Other files (icons, fonts): cache first, and keep anything fetched for offline play.
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  if (new URL(e.request.url).pathname.includes('/apps/')) return; // app downloads: always from the network, never cached
   const save = res => {
     if (res.ok || res.type === 'opaque') { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
     return res;
