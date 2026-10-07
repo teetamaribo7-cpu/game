@@ -90,9 +90,9 @@ These are game coins only. There is no real money.
 
 ## Student app downloads
 The **[apps page](https://teetamaribo7-cpu.github.io/game/apps/)** lets students download Android study apps:
-- **Year 13 Chemistry** v1.1 – `apps/Y13_Chemistry_v1.1.apk` (297 KB)
+- **Year 13 Chemistry** v1.1 – open in the browser at [apps/y13-chemistry/](https://teetamaribo7-cpu.github.io/game/apps/y13-chemistry/), or download `apps/Y13_Chemistry_v1.1.apk` (297 KB) for Android
 
-To add a new version, put the APK in `apps/` and update the link in `apps/index.html`.
+To add a new version, put the APK in `apps/`, copy its `assets/index.html` to `apps/y13-chemistry/index.html`, and update the links in `apps/index.html`.
 
 ## Run it
 Put the files on any web host. GitHub Pages works: go to Settings → Pages → Deploy from a branch.
